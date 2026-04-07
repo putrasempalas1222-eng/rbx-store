@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RBX-STORE | Premium Client Dashboard</title>
+    
+    <title>RBX-STORE | Premium Robux Top Up Service</title>
+    <meta name="description" content="Layanan Top Up Robux tercepat, termurah, dan terpercaya dengan sistem enkripsi otomatis.">
+    <meta name="keywords" content="Robux, Top Up Robux, Robux Murah, RBX STORE">
+    <meta name="author" content="RBX-STORE">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rbx-store.com/"> <meta property="og:title" content="RBX-STORE | Premium Client Dashboard">
+    <meta property="og:description" content="Top Up Robux instan dengan sistem validasi otomatis. Murah, Aman, dan Terpercaya!">
+    <meta property="og:image" content="foto/banner.png"> <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="RBX-STORE | Premium Client Dashboard">
+    <meta property="twitter:description" content="Top Up Robux instan dengan sistem validasi otomatis. Murah, Aman, dan Terpercaya!">
+    <meta property="twitter:image" content="foto/banner.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -59,7 +72,6 @@
             text-align: center;
         }
 
-        /* Floating Discord Widget */
         .discord-float {
             position: fixed;
             bottom: 30px;
@@ -259,7 +271,7 @@
             
             if(type === 'error') {
                 icon.innerHTML = '<svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>';
-                icon.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-500/10 border border-red-500/20";
+                icon.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-500/10 border border-red-500/20 shadow-[0_0_8px_#ef4444]";
                 btn.className = "w-full py-4 rounded-2xl font-black text-xs tracking-[0.2em] text-white uppercase btn-error shadow-xl shadow-red-500/20";
             } else {
                 icon.innerHTML = '<svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
@@ -280,11 +292,11 @@
         };
 
         window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email-login').value, document.getElementById('pass-login').value)
-            .then(() => popStatus('success', 'LOGIN SUCCESS', 'Otoritas diterima. Selamat datang.'))
-            .catch(e => popStatus('error', 'ACCESS DENIED', 'Cek email/password Anda kembali.'));
+            .then(() => popStatus('success', 'LOGIN SUCCESS', 'Otoritas diterima.'))
+            .catch(e => popStatus('error', 'ACCESS DENIED', 'Cek email/password.'));
 
         window.handleRegister = () => createUserWithEmailAndPassword(auth, document.getElementById('email-reg').value, document.getElementById('pass-reg').value)
-            .then(() => popStatus('success', 'ACCOUNT CREATED', 'Registrasi berhasil. Silahkan login.'))
+            .then(() => popStatus('success', 'ACCOUNT CREATED', 'Registrasi berhasil.'))
             .catch(e => popStatus('error', 'FAILED', e.message));
 
         window.handleLogout = () => signOut(auth);
@@ -335,7 +347,7 @@
             const buyAmount = parseInt(buyAmountText.replace(/\D/g, ''));
 
             if (buyAmount > globalStock) {
-                popStatus('error', 'STOCK DENIED', `Stok tidak mencukupi.\nPermintaan: ${buyAmount.toLocaleString()}Robux\nTersedia: ${globalStock.toLocaleString()}Robux`);
+                popStatus('error', 'STOCK DENIED', `Inventory kami tidak cukup.\nSisa: ${globalStock.toLocaleString()}Robux`);
                 return;
             }
             document.getElementById('qris-modal').classList.add('active-modal');
@@ -415,10 +427,10 @@
                                 </div>
                                 <div>
                                     <h4 class="text-lg font-black text-white uppercase italic underline decoration-blue-500/30 tracking-tighter">${data.produk.replace(" Robux", "Robux")}</h4>
-                                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 italic">${data.roblox} • ${data.time}</div>
+                                    <div class="text-[10px] text-slate-500 font-bold mt-1 italic">${data.roblox} • ${data.time}</div>
                                 </div>
                             </div>
-                            <span class="relative z-10 mt-4 md:mt-0 text-[10px] font-black text-blue-400 bg-blue-500/10 px-4 py-1.5 rounded-full border border-blue-500/20 uppercase tracking-widest text-center italic">Successfully Delivered</span>
+                            <span class="relative z-10 mt-4 md:mt-0 text-[10px] font-black text-blue-400 bg-blue-500/10 px-4 py-1.5 rounded-full border border-blue-500/20 uppercase italic">Successfully Delivered</span>
                         </div>`;
                 });
             });
