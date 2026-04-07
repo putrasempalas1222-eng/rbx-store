@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RBX-STORE | Premium Client Dashboard</title>
     
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/5968/5968853.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968853.png">
+    <meta name="theme-color" content="#020617">
     <meta property="og:title" content="RBX-STORE | Premium Client Dashboard">
     <meta property="og:description" content="Top Up Robux & Gamepass instan aman dan terpercaya!">
     <meta property="og:image" content="foto/banner.png">
@@ -15,10 +18,9 @@
         :root { --blue-glow: rgba(59, 130, 246, 0.5); }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #020617; 
-            color: #f8fafc;
+            background: #020617; color: #f8fafc;
             background-image: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0, transparent 40%), 
-                              radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.08) 0, transparent 40%);
+                             radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.08) 0, transparent 40%);
             min-height: 100vh; margin: 0; overflow-x: hidden;
         }
         .glass-card { 
@@ -28,65 +30,30 @@
         }
         #sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .sidebar-item { transition: 0.4s; cursor: pointer; border-radius: 1rem; }
-        .sidebar-item.active { 
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
-            border-left: 4px solid #3b82f6; color: white;
-        }
-        .input-premium {
-            background: rgba(2, 6, 23, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            transition: all 0.3s ease; color: white;
-        }
+        .sidebar-item.active { background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%); border-left: 4px solid #3b82f6; color: white; }
+        .input-premium { background: rgba(2, 6, 23, 0.6) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; transition: 0.3s; color: white; }
         .input-premium:focus { border-color: #3b82f6 !important; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); transform: translateY(-2px); }
         
-        .package-card {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 1.5rem; padding: 1.25rem; cursor: pointer; transition: all 0.3s;
-            text-align: center; position: relative;
-        }
+        .package-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1.5rem; padding: 1.25rem; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; }
         .package-card:hover:not(.disabled) { border-color: #3b82f6; transform: translateY(-5px); background: rgba(59, 130, 246, 0.05); }
-        .package-card.selected {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%);
-            border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        }
-        .package-card.selected::before {
-            content: '✓'; position: absolute; top: 8px; right: 8px; background: #3b82f6; 
-            color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        .package-card.selected { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .package-card.selected::before { content: "✓"; position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; }
         .package-card.disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border-style: dashed; }
 
-        .glow-button {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; color: white;
-        }
+        .glow-button { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; color: white; }
         .modal-bg { background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(15px); display: none; position: fixed; inset: 0; z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .active-modal { display: flex !important; }
-        
+
         .discord-float { position: fixed; bottom: 30px; right: 30px; z-index: 1000; text-decoration: none; }
-        .discord-btn {
-            width: 60px; height: 60px; background: #5865F2; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; position: relative;
-            box-shadow: 0 10px 25px rgba(88, 101, 242, 0.4); transition: 0.3s;
-        }
+        .discord-btn { width: 60px; height: 60px; background: #5865f2; border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 25px rgba(88, 101, 242, 0.4); transition: 0.3s; }
         .discord-btn:hover { transform: scale(1.1) rotate(5deg); }
-        .discord-tooltip {
-            position: absolute; right: 75px; top: 50%; transform: translateY(-50%);
-            background: rgba(15, 23, 42, 0.9); color: white; padding: 8px 15px;
-            border-radius: 12px; font-size: 11px; font-weight: 800; opacity: 0; transition: 0.3s; white-space: nowrap;
-        }
+        .discord-tooltip { position: absolute; right: 75px; top: 50%; transform: translateY(-50%); background: rgba(15, 23, 42, 0.9); color: white; padding: 8px 15px; border-radius: 12px; font-size: 11px; font-weight: 800; opacity: 0; transition: 0.3s; white-space: nowrap; }
         .discord-float:hover .discord-tooltip { opacity: 1; }
-        .discord-btn::after {
-            content: ''; position: absolute; width: 100%; height: 100%; background: #5865F2;
-            border-radius: 20px; z-index: -1; animation: discord-pulse 2s infinite;
-        }
+        .discord-btn::after { content: ""; position: absolute; width: 100%; height: 100%; background: #5865f2; border-radius: 20px; z-index: -1; animation: discord-pulse 2s infinite; }
         @keyframes discord-pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.6); opacity: 0; } }
 
-        .game-header {
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent);
-            padding: 15px 25px; border-radius: 1.5rem; border-left: 4px solid #3b82f6;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
-        }
+        .game-header { background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent); padding: 15px 25px; border-radius: 1.5rem; border-left: 4px solid #3b82f6; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .contact-info-wrapper { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.5rem; padding: 1rem; margin-top: 1rem; text-align: left; }
         .star-cb-group { font-size: 0; unicode-bidi: bidi-override; direction: rtl; }
         .star-cb-group > input { display: none; }
         .star-cb-group > label { display: inline-block; font-size: 2rem; cursor: pointer; color: #334155; }
@@ -95,33 +62,33 @@
 </head>
 <body class="flex flex-col lg:flex-row overflow-x-hidden">
 
-    <div class="lg:hidden w-full p-5 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-[50]">
-        <div class="text-2xl font-black tracking-tighter text-white uppercase italic">RBX<span class="text-blue-500">STORE</span></div>
-        <button onclick="toggleSidebar()" class="p-2 bg-blue-500/10 rounded-xl text-red-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-    </div>
-
     <div id="status-modal" class="modal-bg">
         <div class="glass-card w-full max-w-sm p-10 rounded-[3rem] text-center border-white/10 shadow-2xl">
-            <div id="status-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"></div>
-            <h3 id="status-title" class="text-2xl font-black mb-3 text-white uppercase italic">NOTIFICATION</h3>
-            <p id="status-msg" class="text-xs text-slate-400 mb-8 leading-relaxed font-bold uppercase tracking-widest"></p>
+            <div id="status-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"></div>
+            <h3 id="status-title" class="text-2xl font-black mb-3 text-white uppercase italic text-center">NOTIFICATION</h3>
+            <p id="status-msg" class="text-xs text-slate-400 mb-8 leading-relaxed font-bold uppercase tracking-widest text-center"></p>
             <button onclick="confirmPopup()" class="w-full py-5 rounded-2xl font-black text-xs text-white uppercase bg-blue-600 shadow-xl hover:scale-105 transition">Okey, Saya Mengerti</button>
         </div>
     </div>
 
+    <div class="lg:hidden w-full p-5 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-[50]">
+        <div class="text-2xl font-black tracking-tighter text-white uppercase italic">RBX<span class="text-blue-500">STORE</span></div>
+        <button onclick="toggleSidebar()" class="p-2 bg-blue-500/10 rounded-xl text-blue-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+    </div>
+
     <div id="rating-modal" class="modal-bg fixed inset-0 z-[250] items-center justify-center p-6">
         <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center">
-            <h3 class="text-xl font-black mb-1 text-white uppercase italic">Rate Your Order</h3>
+            <h3 class="text-xl font-black mb-1 text-white uppercase italic text-center">Rate Your Order</h3>
             <div class="star-cb-group mb-6 mx-auto">
-                <input type="radio" id="rating-5" name="rating" value="5" /><label for="rating-5">★</label>
+                <input type="radio" id="rating-5" name="rating" value="5" /><label for="rating-5">★</label> 
                 <input type="radio" id="rating-4" name="rating" value="4" /><label for="rating-4">★</label>
-                <input type="radio" id="rating-3" name="rating" value="3" /><label for="rating-3">★</label>
+                <input type="radio" id="rating-3" name="rating" value="3" /><label for="rating-3">★</label> 
                 <input type="radio" id="rating-2" name="rating" value="2" /><label for="rating-2">★</label>
                 <input type="radio" id="rating-1" name="rating" value="1" /><label for="rating-1">★</label>
             </div>
-            <input type="hidden" id="rate-order-id"><input type="hidden" id="rate-produk-name">
+            <input type="hidden" id="rate-order-id" /><input type="hidden" id="rate-produk-name" />
             <textarea id="rate-comment" placeholder="Testimoni..." class="input-premium w-full p-4 rounded-2xl outline-none text-xs h-24 mb-6"></textarea>
             <button onclick="submitRating()" class="glow-button w-full py-4 rounded-2xl font-black text-xs text-white uppercase">Kirim Penilaian</button>
         </div>
@@ -129,29 +96,29 @@
 
     <div id="qris-modal" class="modal-bg fixed inset-0 z-[110] items-center justify-center p-6">
         <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center border-blue-500/30">
-            <h3 class="text-xl font-black mb-4 text-blue-400 uppercase italic">QRIS Payment</h3>
+            <h3 class="text-xl font-black mb-4 text-blue-400 uppercase italic text-center">QRIS Payment</h3>
             <div class="bg-white p-3 rounded-3xl mb-4 inline-block shadow-lg">
-                <img src="foto/qris.png" alt="QRIS" class="w-56 h-auto mx-auto rounded-xl">
+                <img src="foto/qris.png" alt="QRIS" class="w-56 h-auto mx-auto rounded-xl" />
             </div>
             <p class="text-[10px] text-slate-400 uppercase font-bold italic text-center">Scan & konfirmasi ke Discord.</p>
             <button onclick="confirmQris()" class="glow-button w-full py-4 rounded-2xl font-black text-xs text-white mt-4 uppercase">OK, KONFIRMASI DISCORD</button>
         </div>
     </div>
 
-    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-6">
-        <div class="glass-card w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] text-center">
+    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-6 text-center">
+        <div class="glass-card w-full max-w-md p-8 lg:p-12 rounded-[2.5rem]">
             <h2 class="text-3xl lg:text-4xl font-black mb-2 text-white italic">RBX<span class="text-blue-500">STORE</span></h2>
             <div id="login-form" class="space-y-4 mt-6">
-                <input type="email" id="email-login" placeholder="Email Address" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none text-sm font-semibold">
-                <input type="password" id="pass-login" placeholder="Password" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none text-sm font-semibold">
-                <button onclick="handleLogin()" class="glow-button w-full py-4 lg:p-5 rounded-2xl font-extrabold text-sm uppercase">Login Dashboard</button>
-                <p class="text-xs text-slate-500 mt-4 text-center">No account? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Register</a></p>
+                <input type="email" id="email-login" placeholder="Email Address" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
+                <input type="password" id="pass-login" placeholder="Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
+                <button onclick="handleLogin()" class="glow-button w-full py-4 rounded-2xl font-extrabold text-sm uppercase text-center">Login Dashboard</button>
+                <p class="text-xs text-slate-500 mt-4">No account? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Register</a></p>
             </div>
             <div id="register-form" class="hidden space-y-4 mt-6">
-                <input type="email" id="email-reg" placeholder="New Email" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none text-sm font-semibold">
-                <input type="password" id="pass-reg" placeholder="Create Password" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none text-sm font-semibold">
-                <button onclick="handleRegister()" class="w-full bg-indigo-600 py-4 lg:p-5 rounded-2xl font-extrabold text-sm text-white uppercase">Sign Up</button>
-                <p class="text-xs text-slate-500 mt-4 text-center">Registered? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Login</a></p>
+                <input type="email" id="email-reg" placeholder="New Email" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
+                <input type="password" id="pass-reg" placeholder="Create Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
+                <button onclick="handleRegister()" class="w-full bg-indigo-600 py-4 rounded-2xl font-extrabold text-sm text-white uppercase text-center">Sign Up</button>
+                <p class="text-xs text-slate-500 mt-4">Registered? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Back to Login</a></p>
             </div>
         </div>
     </div>
@@ -159,249 +126,251 @@
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-[#020617] lg:bg-[#020617]/50 border-r border-white/5 p-10 flex flex-col z-[60] -translate-x-full lg:translate-x-0 lg:sticky lg:h-screen text-center">
         <div class="text-3xl font-black mb-16 italic text-white tracking-tighter">RBX<span class="text-blue-500">.</span></div>
         <nav class="flex-1 space-y-6 text-left">
-            <div onclick="showPage('home')" id="nav-home" class="sidebar-item active p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase">
-                <div class="w-2 h-2 rounded-full bg-blue-500"></div> Home
-            </div>
-            <div onclick="showPage('riwayat')" id="nav-riwayat" class="sidebar-item p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase">
-                <div class="w-2 h-2 rounded-full bg-slate-700"></div> History
-            </div>
+            <div onclick="showPage('home')" id="nav-home" class="sidebar-item active p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Home</div>
+            <div onclick="showPage('riwayat')" id="nav-riwayat" class="sidebar-item p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-slate-700"></div> History</div>
         </nav>
-        <div class="mt-auto border-t border-white/5 pt-8 text-center">
-            <p id="user-display" class="text-[9px] font-black text-slate-500 mb-4 truncate uppercase tracking-widest"></p>
-            <button onclick="handleLogout()" class="w-full text-[9px] font-black text-red-500 tracking-widest hover:text-red-400 transition uppercase italic">Logout Access</button>
+        <div class="mt-auto border-t border-white/5 pt-6 text-center">
+            <p id="user-display" class="text-[9px] font-black text-slate-500 mb-3 truncate uppercase tracking-widest"></p>
+            <button onclick="handleLogout()" class="w-full text-[9px] font-black text-red-500 tracking-widest hover:text-red-400 transition uppercase italic mb-4">Logout Access</button>
+            <div class="contact-info-wrapper glass-card">
+                <h5 class="text-[10px] font-black text-white uppercase mb-3 italic">Hubungi Kami</h5>
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center gap-2.5 text-slate-400"><svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-width="2"/></svg><span class="text-[8px] font-bold truncate">mputramadhaniid@gmail.com</span></div>
+                    <a href="https://instagram.com/putramdhanii_" target="_blank" class="flex items-center gap-2.5 text-slate-400 hover:text-white"><svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2"/></svg><span class="text-[8px] font-bold">@putramdhanii_</span></a>
+                    <div class="flex items-center gap-2.5 text-slate-400"><svg class="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg><span class="text-[8px] font-bold">@thiss_putradis</span></div>
+                </div>
+            </div>
         </div>
     </aside>
 
     <main class="flex-1 p-6 lg:p-20 overflow-y-auto">
         <section id="page-home">
-            <header class="mb-12">
-                <h1 class="text-5xl font-black mb-4 tracking-tighter text-white italic uppercase">Dashboard</h1>
-                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Premium Robux & Gamepass Service</p>
-            </header>
-
+            <header class="mb-12"><h1 class="text-5xl font-black mb-4 italic uppercase text-white">Dashboard</h1><p class="text-slate-400 font-bold text-xs uppercase">Premium Robux & Gamepass Service</p></header>
             <div class="max-w-5xl mx-auto lg:mx-0">
-                <div class="inventory-card mb-12 border-l-4 border-blue-500 shadow-2xl flex flex-col items-center">
-                    <div class="text-[9px] font-black text-blue-400 tracking-[0.4em] uppercase mb-1 italic">Stock Inventory</div>
+                <div class="glass-card p-8 rounded-[2.5rem] mb-12 flex flex-col items-center">
+                    <div class="text-[9px] font-black text-blue-400 uppercase mb-1 italic">Stock Inventory</div>
                     <div class="text-4xl font-black text-white tracking-tighter" id="stok-display">0Robux</div>
                 </div>
-
                 <div id="order-container">
                     <div class="glass-card p-10 rounded-[2.5rem] mb-12 text-left">
-                        <h3 class="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-8 italic">1. Account Information</h3>
+                        <h3 class="text-xs font-black text-blue-500 uppercase mb-8 italic">1. Account Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <input type="text" id="roblox_user" placeholder="Username Roblox Mu" oninput="this.value = this.value.replace(/\s/g, '')" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic uppercase text-sm">
-                            <input type="text" id="discord_user" placeholder="Username Discord" oninput="this.value = this.value.replace(/\s/g, '')" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic text-sm">
+                            <input type="text" id="roblox_user" placeholder="Username Roblox Mu" oninput="this.value = this.value.replace(/\s/g, '')" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic uppercase text-sm" />
+                            <input type="text" id="discord_user" placeholder="Username Discord" oninput="this.value = this.value.replace(/\s/g, '')" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic text-sm" />
                         </div>
                     </div>
-
-                    <h3 class="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-8 italic ml-4 text-left">2. Select Product Robux</h3>
-                    <div id="robux-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-14"></div>
-
-                    <h3 class="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-6 italic ml-4 text-left">3. Select Product Gamepass</h3>
-                    <div class="game-header">
-                        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-blue-900/40">🎣</div>
-                        <div>
-                            <h4 class="text-white font-black italic uppercase tracking-tighter text-xl">Memancing Ikan itu!</h4>
-                            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Exclusive Map Items</p>
-                        </div>
-                    </div>
-                    <div id="gamepass-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-10"></div>
-
-                    <button onclick="checkStockAndOpenQris()" class="glow-button w-full py-6 rounded-[2rem] text-white font-black uppercase tracking-[0.2em] text-sm mt-8">Confirm & Buy Now</button>
+                    <h3 class="text-xs font-black text-blue-500 uppercase mb-8 italic ml-4 text-left">2. Select Product Robux</h3>
+                    <div id="robux-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-14"></div>
+                    <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic ml-4 text-left">3. Select Product Gamepass</h3>
+                    <div class="game-header"><div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-blue-900/40">🎣</div><div><h4 class="text-white font-black italic text-xl uppercase">Memancing Ikan itu!</h4><p class="text-slate-500 text-[10px] font-bold uppercase">Exclusive Items</p></div></div>
+                    <div id="gamepass-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10"></div>
+                    <button onclick="checkStockAndOpenQris()" class="glow-button w-full py-6 rounded-[2rem] text-white font-black uppercase text-sm mt-8">Confirm & Buy Now</button>
                 </div>
-
                 <div id="waiting-area" class="hidden text-center py-20 glass-card rounded-[3rem]">
-                    <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-8 shadow-[0_0_15px_#3b82f6]"></div>
+                    <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-8 shadow-blue-500"></div>
                     <h3 class="text-2xl font-black text-yellow-500 uppercase italic">Queue Active</h3>
-                    <p class="text-slate-500 text-[10px] mt-4 font-black uppercase text-center">Admin sedang mengecek pembayaran anda...</p>
+                    <p class="text-slate-500 text-[10px] mt-4 font-black uppercase">Admin sedang meninjau pesanan anda...</p>
                 </div>
             </div>
         </section>
-
-        <section id="page-riwayat" class="hidden">
-            <h1 class="text-5xl font-black mb-12 italic text-white uppercase tracking-tighter">History</h1>
-            <div id="riwayat-list" class="grid grid-cols-1 gap-4 max-w-4xl text-center"></div>
-        </section>
+        <section id="page-riwayat" class="hidden"><h1 class="text-5xl font-black mb-12 italic text-white uppercase">History</h1><div id="riwayat-list" class="grid grid-cols-1 gap-4 text-center"></div></section>
     </main>
 
-    <a href="https://discord.com/users/689328089104515161" target="_blank" class="discord-float group">
-        <span class="discord-tooltip uppercase italic">Hubungi Kami</span>
-        <div class="discord-btn">
-            <svg class="w-7 h-7 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-        </div>
-    </a>
+    <a href="https://discord.com/users/689328089104515161" target="_blank" class="discord-float group"><span class="discord-tooltip uppercase italic">Hubungi Kami</span><div class="discord-btn"><svg class="w-7 h-7 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></div></a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgDG1pbpT-eB8RR_gPGs1EfZR9Sfczzfc",
-            authDomain: "cute-temanmu.firebaseapp.com",
-            databaseURL: "https://cute-temanmu-default-rtdb.firebaseio.com",
-            projectId: "cute-temanmu",
-            storageBucket: "cute-temanmu.appspot.com",
-            messagingSenderId: "356926981274",
-            appId: "1:356926981274:web:f7ffb5817dfe5c74a4cb23"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1466102748331245568/innFCGbR6TPdicNfmcbcrTP8sJ7VVs6O0oAl3bfWeu3LCNlxBFP3jsdxWsgVOx8pL1PL"; 
+        const firebaseConfig = { apiKey: "AIzaSyBgDG1pbpT-eB8RR_gPGs1EfZR9Sfczzfc", authDomain: "cute-temanmu.firebaseapp.com", databaseURL: "https://cute-temanmu-default-rtdb.firebaseio.com", projectId: "cute-temanmu", storageBucket: "cute-temanmu.appspot.com", messagingSenderId: "356926981274", appId: "1:356926981274:web:f7ffb5817dfe5c74a4cb23" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app);
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1473231285924265994/pWp8ggIvgfzoZwFPnudv5z6m354LGUrUcIwVPmLptP3fO7BB74j2fhXN0Jv7zi5eki3R"; 
         let globalStock = 0; let selectedPackage = null; let lastNotifKey = null;
 
-        function sensorEmail(email) { let parts = email.split("@"); return parts[0].substring(0, 3) + "****@" + parts[1]; }
+        // FUNGSI SENSOR EMAIL (Menampilkan 3 huruf depan + bintang)
+        function sensorEmail(email) { 
+            if (!email) return "Unknown";
+            let parts = email.split("@"); 
+            let name = parts[0];
+            let domain = parts[1];
+            return name.substring(0, 3) + "****@" + domain; 
+        }
 
         window.popStatus = (type, title, msg) => {
-            const modal = document.getElementById('status-modal');
-            const icon = document.getElementById('status-icon');
-            document.getElementById('status-title').innerText = title;
-            document.getElementById('status-msg').innerText = msg;
-            modal.classList.add('active-modal');
-            if(type === 'error') {
-                icon.innerHTML = '❌'; icon.className = "w-20 h-20 bg-red-500/20 text-4xl flex items-center justify-center rounded-full mx-auto mb-6";
-            } else {
-                icon.innerHTML = '✅'; icon.className = "w-20 h-20 bg-emerald-500/20 text-4xl flex items-center justify-center rounded-full mx-auto mb-6";
-            }
+            const modal = document.getElementById("status-modal");
+            document.getElementById("status-title").innerText = title;
+            document.getElementById("status-msg").innerText = msg;
+            const icon = document.getElementById("status-icon");
+            icon.innerHTML = type === "error" ? "❌" : "✅";
+            icon.className = `w-20 h-20 ${type === "error" ? "bg-red-500/20" : "bg-emerald-500/20"} text-4xl flex items-center justify-center rounded-full mx-auto mb-6`;
+            modal.classList.add("active-modal");
         };
 
         window.confirmPopup = async () => {
             const uid = auth.currentUser.uid;
-            if(lastNotifKey) { await remove(ref(db, `notif_popup/${uid}/${lastNotifKey}`)); lastNotifKey = null; }
-            document.getElementById('status-modal').classList.remove('active-modal');
+            if (lastNotifKey) { await remove(ref(db, `notif_popup/${uid}/${lastNotifKey}`)); lastNotifKey = null; }
+            document.getElementById("status-modal").classList.remove("active-modal");
         };
 
         onAuthStateChanged(auth, (user) => {
-            document.getElementById('auth-modal').className = user ? 'modal-bg fixed inset-0 z-[100] items-center justify-center p-6' : 'modal-bg active-modal fixed inset-0 z-[100] items-center justify-center p-6';
-            if(user) { 
-                document.getElementById('user-display').innerText = user.email; 
-                monitorOrder(user.uid); monitorPopup(user.uid); loadRiwayat(user.uid);
+            document.getElementById("auth-modal").className = user ? "modal-bg" : "modal-bg active-modal";
+            if (user) { 
+                document.getElementById("user-display").innerText = sensorEmail(user.email); 
+                monitorOrder(user.uid); 
+                monitorPopup(user.uid); 
+                loadRiwayat(user.uid); 
             }
         });
 
         function monitorPopup(uid) {
             onValue(ref(db, `notif_popup/${uid}`), (snap) => {
-                if(snap.exists()) {
-                    snap.forEach(c => { const d = c.val(); lastNotifKey = c.key; popStatus(d.type, d.title, d.msg); });
-                }
+                if (snap.exists()) { snap.forEach((c) => { const d = c.val(); lastNotifKey = c.key; popStatus(d.type, d.title, d.msg); }); }
             });
         }
 
-        onValue(ref(db, 'stok_robux'), (snap) => { 
+        onValue(ref(db, "stok_robux"), (snap) => { 
             globalStock = snap.val() || 0; 
-            document.getElementById('stok-display').innerText = globalStock.toLocaleString('id-ID') + "Robux"; 
-            loadProducts();
+            document.getElementById("stok-display").innerText = globalStock.toLocaleString("id-ID") + "Robux"; 
+            loadProducts(); 
         });
 
         function loadProducts() {
-            onValue(ref(db, 'produk'), (snap) => {
-                const rGrid = document.getElementById('robux-grid'); const gGrid = document.getElementById('gamepass-grid');
+            onValue(ref(db, "produk"), (snap) => {
+                const rGrid = document.getElementById("robux-grid"); const gGrid = document.getElementById("gamepass-grid");
                 rGrid.innerHTML = ""; gGrid.innerHTML = "";
-                
-                let allProducts = [];
-                snap.forEach(c => { allProducts.push({key: c.key, ...c.val()}); });
-
-                // SORTING OTOMATIS: Kecil ke Besar (Berdasarkan Angka di amount)
-                allProducts.sort((a, b) => {
-                    let valA = parseInt(a.amount.replace(/\D/g, '')) || 0;
-                    let valB = parseInt(b.amount.replace(/\D/g, '')) || 0;
-                    return valA - valB;
-                });
-
-                allProducts.forEach(d => {
-                    const t = d.type || "Robux";
-                    const buyAmt = parseInt(d.amount.replace(/\D/g, '')) || 0;
-                    const isOutOfStock = (t === 'Robux' && buyAmt > globalStock);
+                let all = []; snap.forEach((c) => { all.push({ key: c.key, ...c.val() }); });
+                all.sort((a, b) => (parseInt(a.amount.replace(/\D/g, "")) || 0) - (parseInt(b.amount.replace(/\D/g, "")) || 0));
+                all.forEach((d) => {
+                    const t = d.type || "Robux"; const buyAmt = parseInt(d.amount.replace(/\D/g, "")) || 0;
+                    const isOutOfStock = t === "Robux" && buyAmt > globalStock;
                     const card = document.createElement("div");
-                    card.className = `package-card ${isOutOfStock ? 'disabled' : ''}`;
-                    card.innerHTML = `<div class="text-2xl mb-2">${t === 'Robux' ? '💎' : '🎁'}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1">${t}</div><div class="text-[11px] font-black text-white italic mb-1 uppercase">${d.amount} ${t === 'Robux' ? 'Robux' : ''}</div><div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Rp ${d.price}</div>`;
-                    if(!isOutOfStock) card.onclick = () => { document.querySelectorAll('.package-card').forEach(x => x.classList.remove('selected')); card.classList.add('selected'); selectedPackage = d; };
-                    if(t === 'Robux') rGrid.appendChild(card); else gGrid.appendChild(card);
+                    card.className = `package-card ${isOutOfStock ? "disabled" : ""}`;
+                    card.innerHTML = `<div class="text-2xl mb-2">${t === "Robux" ? "💎" : "🎁"}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1">${t}</div><div class="text-[11px] font-black text-white italic mb-1 uppercase">${d.amount} ${t === "Robux" ? "Robux" : ""}</div><div class="text-[9px] font-bold text-slate-500">Rp ${d.price}</div>`;
+                    if (!isOutOfStock) card.onclick = () => { document.querySelectorAll(".package-card").forEach((x) => x.classList.remove("selected")); card.classList.add("selected"); selectedPackage = d; };
+                    if (t === "Robux") rGrid.appendChild(card); else gGrid.appendChild(card);
                 });
-            });
+            }, { onlyOnce: true });
         }
 
         window.checkStockAndOpenQris = () => {
-            const r = document.getElementById('roblox_user').value; const d = document.getElementById('discord_user').value;
-            if(!r || !d || !selectedPackage) return popStatus('error', 'INCOMPLETE', 'Isi data & pilih paket.');
-            document.getElementById('qris-modal').classList.add('active-modal');
+            const r = document.getElementById("roblox_user").value; const d = document.getElementById("discord_user").value;
+            if (!r || !d || !selectedPackage) return popStatus("error", "INCOMPLETE", "Isi data & pilih paket.");
+            document.getElementById("qris-modal").classList.add("active-modal");
         };
 
         window.confirmQris = async () => {
-            const r = document.getElementById('roblox_user').value; const d = document.getElementById('discord_user').value; const u = auth.currentUser;
+            const r = document.getElementById("roblox_user").value; 
+            const d = document.getElementById("discord_user").value; 
+            const u = auth.currentUser;
+            const censored = sensorEmail(u.email);
+
             try {
-                await set(ref(db, `orders_active/${u.uid}`), { uid: u.uid, email: u.email, roblox: r, discord: d, produk: selectedPackage.display, type: selectedPackage.type || "Robux", time: new Date().toLocaleString(), status: 'pending' });
+                await set(ref(db, `orders_active/${u.uid}`), { uid: u.uid, email: u.email, roblox: r, discord: d, produk: selectedPackage.display, type: selectedPackage.type || "Robux", time: new Date().toLocaleString(), status: "pending" });
                 
-                const embed = {
-                    title: "📑 INVOICE - NEW ORDER",
-                    color: 3447003,
-                    description: "Pesanan baru menunggu konfirmasi Admin.",
+                // WEBHOOK ORDER BARU DENGAN SENSOR
+                const embed = { 
+                    title: "📑 INVOICE - NEW ORDER", 
+                    color: 3447003, 
                     fields: [
-                        { name: "👤 PELANGGAN", value: `\`${sensorEmail(u.email)}\``, inline: false },
-                        { name: "🎮 ROBLOX", value: `**${r}**`, inline: true },
-                        { name: "💬 DISCORD", value: `**${d}**`, inline: true },
-                        { name: "📦 PRODUK", value: `\`${selectedPackage.display}\``, inline: false },
-                        { name: "💰 STATUS", value: "🟡 **MENUNGGU KONFIRMASI**", inline: false }
-                    ],
-                    timestamp: new Date()
+                        { name: "👤 PELANGGAN", value: `\`${censored}\`` }, 
+                        { name: "🎮 ROBLOX", value: `**${r}**`, inline: true }, 
+                        { name: "💬 DISCORD", value: `**${d}**`, inline: true }, 
+                        { name: "📦 PRODUK", value: `\`${selectedPackage.display}\`` }, 
+                        { name: "💰 STATUS", value: "**PENDING**" }
+                    ], 
+                    timestamp: new Date() 
                 };
 
-                await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ embeds: [embed] }) });
-                document.getElementById('qris-modal').classList.remove('active-modal');
-                window.open("https://discord.com/users/689328089104515161", '_blank');
-            } catch (e) { popStatus('error', 'SYSTEM ERROR', e.message); }
+                await fetch(DISCORD_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [embed] }) });
+                document.getElementById("qris-modal").classList.remove("active-modal");
+                window.open("https://discord.com/users/689328089104515161", "_blank");
+            } catch (e) { popStatus("error", "SYSTEM ERROR", e.message); }
         };
 
-        window.openRating = (orderKey, produk) => { document.getElementById('rate-order-id').value = orderKey; document.getElementById('rate-produk-name').value = produk; document.getElementById('rating-modal').classList.add('active-modal'); };
+        window.openRating = (orderKey, produk) => { 
+            document.getElementById("rate-order-id").value = orderKey; 
+            document.getElementById("rate-produk-name").value = produk; 
+            document.getElementById("rating-modal").classList.add("active-modal"); 
+        };
+
         window.submitRating = async () => {
-            const oKey = document.getElementById('rate-order-id').value; const stars = document.querySelector('input[name="rating"]:checked')?.value;
-            const comm = document.getElementById('rate-comment').value || "No comment"; const user = auth.currentUser;
-            if(!stars) return popStatus('error', 'RATING EMPTY', 'Pilih bintang.');
+            const oKey = document.getElementById("rate-order-id").value; 
+            const stars = document.querySelector('input[name="rating"]:checked')?.value;
+            const comm = document.getElementById("rate-comment").value || "No comment"; 
+            const user = auth.currentUser;
+            const censored = sensorEmail(user.email);
+
+            if (!stars) return popStatus("error", "RATING EMPTY", "Pilih bintang.");
+            
             try {
                 await update(ref(db, `riwayat/${user.uid}/${oKey}`), { rating: stars, testimoni: comm });
-                await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ embeds: [{ title: "⭐ FEEDBACK", color: 16111360, fields: [{ name: "👤 Pembeli", value: sensorEmail(user.email), inline: true }, { name: "✨ Rating", value: "⭐".repeat(stars), inline: true }, { name: "💬 Komentar", value: comm }] }] }) });
-                document.getElementById('rating-modal').classList.remove('active-modal'); popStatus('success', 'THANKS', 'Penilaian tersimpan.');
-            } catch (e) { popStatus('error', 'FAILED', e.message); }
+                
+                // WEBHOOK RATING DENGAN SENSOR & BINTANG
+                await fetch(DISCORD_WEBHOOK_URL, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify({ 
+                        embeds: [{ 
+                            title: "⭐ FEEDBACK BARU", 
+                            color: 16111360, 
+                            fields: [
+                                { name: "👤 Pembeli", value: `\`${censored}\``, inline: true }, 
+                                { name: "✨ Rating", value: "⭐".repeat(stars), inline: true }, 
+                                { name: "💬 Komentar", value: `*${comm}*` }
+                            ] 
+                        }] 
+                    }) 
+                });
+
+                document.getElementById("rating-modal").classList.remove("active-modal"); 
+                popStatus("success", "THANKS", "Penilaian tersimpan.");
+            } catch (e) { popStatus("error", "FAILED", e.message); }
         };
 
         function monitorOrder(uid) {
             onValue(ref(db, `orders_active/${uid}`), (snap) => {
-                document.getElementById('order-container').className = snap.exists() ? 'hidden' : '';
-                document.getElementById('waiting-area').className = snap.exists() ? '' : 'hidden';
+                document.getElementById("order-container").className = snap.exists() ? "hidden" : "";
+                document.getElementById("waiting-area").className = snap.exists() ? "" : "hidden";
             });
         }
 
         function loadRiwayat(uid) {
             onValue(ref(db, `riwayat/${uid}`), (snap) => {
-                const list = document.getElementById('riwayat-list'); list.innerHTML = "";
+                const list = document.getElementById("riwayat-list"); list.innerHTML = "";
                 if (!snap.exists()) { list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30">Belum ada riwayat</p>`; return; }
-                const raw = []; snap.forEach(c => { raw.push({ key: c.key, ...c.val() }); });
-                raw.reverse().forEach(d => {
-                    const isF = d.status === 'failed';
-                    const rDisp = isF ? `<div class="text-[9px] text-red-400 font-bold bg-red-500/10 px-3 py-1 rounded-lg uppercase italic mt-1">Reason: ${d.reason || 'Invalid'}</div>` : (d.rating ? `⭐`.repeat(d.rating) : `<button onclick="openRating('${d.key}', '${d.produk}')" class="bg-blue-500 text-white text-[8px] font-black px-4 py-1.5 rounded-full uppercase italic transition">RATE ORDER</button>`);
-                    list.innerHTML += `<div class="glass-card flex flex-col md:flex-row items-center justify-between p-6 lg:p-8 rounded-[2rem] border-l-4 ${isF ? 'border-red-600' : 'border-blue-500'} mb-4 relative overflow-hidden">
+                const raw = []; snap.forEach((c) => { raw.push({ key: c.key, ...c.val() }); });
+                raw.reverse().forEach((d) => {
+                    const isF = d.status === "failed";
+                    const rDisp = isF ? `<div class="text-[9px] text-red-400 font-bold bg-red-500/10 px-3 py-1 rounded-lg uppercase italic mt-1">Reason: ${d.reason || "Invalid"}</div>` : (d.rating ? `⭐`.repeat(d.rating) : `<button onclick="openRating('${d.key}', '${d.produk}')" class="bg-blue-500 text-white text-[8px] font-black px-4 py-1.5 rounded-full uppercase italic transition">RATE ORDER</button>`);
+                    list.innerHTML += `<div class="glass-card flex flex-col md:flex-row items-center justify-between p-6 lg:p-8 rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 relative overflow-hidden text-left">
                         <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
-                            <div class="w-12 h-12 rounded-2xl ${isF ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'} flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isF ? 'M6 18L18 6M6 6l12 12' : 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg></div>
-                            <div class="text-center md:text-left"><h4 class="text-lg font-black text-white uppercase italic underline decoration-white/10 tracking-tighter">${d.produk.replace(" Robux", "Robux")}</h4><div class="text-[9px] text-slate-500 font-bold mt-1 italic uppercase">${d.roblox} • ${d.time}</div></div>
+                            <div class="w-12 h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isF ? "M6 18L18 6M6 6l12 12" : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"}"></path></svg></div>
+                            <div><h4 class="text-lg font-black text-white uppercase italic underline decoration-white/10 tracking-tighter">${d.produk.replace(" Robux", "Robux")}</h4><div class="text-[9px] text-slate-500 font-bold mt-1 italic uppercase">${d.roblox} • ${d.time}</div></div>
                         </div>
                         <div class="mt-4 md:mt-0 flex flex-col items-center md:items-end gap-2 relative z-10">
-                            <div class="text-[10px] font-black ${isF ? 'text-red-500' : 'text-blue-400'} uppercase italic">Status: ${isF ? 'Rejected' : 'Success'}</div>
+                            <div class="text-[10px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase italic">Status: ${isF ? "Rejected" : "Success"}</div>
                             ${rDisp}
                         </div>
                     </div>`;
                 });
             });
         }
-        window.toggleSidebar = () => document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        window.showPage = (p) => { document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden')); document.getElementById(`page-${p}`).classList.remove('hidden'); document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active')); document.getElementById(`nav-${p}`).classList.add('active'); if(window.innerWidth < 1024) toggleSidebar(); };
-        window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email-login').value, document.getElementById('pass-login').value);
-        window.handleRegister = () => createUserWithEmailAndPassword(auth, document.getElementById('email-reg').value, document.getElementById('pass-reg').value);
+
+        window.toggleSidebar = () => document.getElementById("sidebar").classList.toggle("-translate-x-full");
+        
+        window.showPage = (p) => { 
+            document.querySelectorAll("main > section").forEach((s) => s.classList.add("hidden")); 
+            document.getElementById(`page-${p}`).classList.remove("hidden"); 
+            document.querySelectorAll(".sidebar-item").forEach((i) => i.classList.remove("active")); 
+            document.getElementById(`nav-${p}`).classList.add("active"); 
+            if (window.innerWidth < 1024) toggleSidebar(); 
+        };
+
+        window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById("email-login").value, document.getElementById("pass-login").value).catch(e => popStatus("error", "LOGIN FAILED", "Email/Password salah"));
+        window.handleRegister = () => createUserWithEmailAndPassword(auth, document.getElementById("email-reg").value, document.getElementById("pass-reg").value).catch(e => popStatus("error", "REGISTRATION FAILED", e.message));
         window.handleLogout = () => signOut(auth);
-        window.toggleAuth = () => { document.getElementById('login-form').classList.toggle('hidden'); document.getElementById('register-form').classList.toggle('hidden'); };
-        window.closeStatus = () => document.getElementById('status-modal').classList.remove('active-modal');
+        window.toggleAuth = () => { document.getElementById("login-form").classList.toggle("hidden"); document.getElementById("register-form").classList.toggle("hidden"); };
     </script>
 </body>
 </html>
