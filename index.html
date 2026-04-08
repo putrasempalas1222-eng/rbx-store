@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,6 @@
     <meta name="theme-color" content="#020617" />
     <meta property="og:title" content="RBX-STORE | Premium Client Dashboard" />
     <meta property="og:description" content="Top Up Robux & Gamepass instan aman dan terpercaya!" />
-    <meta property="og:image" content="foto/banner.png" />
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -18,249 +17,67 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <style>
-      :root {
-        --blue-glow: rgba(59, 130, 246, 0.5);
-      }
+      :root { --blue-glow: rgba(59, 130, 246, 0.5); }
       body {
         font-family: "Plus Jakarta Sans", sans-serif;
         background: #020617;
         color: #f8fafc;
         background-image: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.08) 0, transparent 40%);
-        min-height: 100vh;
-        margin: 0;
-        overflow-x: hidden;
+        min-height: 100vh; margin: 0; overflow-x: hidden;
       }
       .glass-card {
-        background: rgba(15, 23, 42, 0.3);
-        backdrop-filter: blur(20px);
+        background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.05);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       }
-      #sidebar {
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .sidebar-item {
-        transition: 0.4s;
-        cursor: pointer;
-        border-radius: 1rem;
-      }
+      #sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+      .sidebar-item { transition: 0.4s; cursor: pointer; border-radius: 1rem; }
       .sidebar-item.active {
         background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
-        border-left: 4px solid #3b82f6;
-        color: white;
+        border-left: 4px solid #3b82f6; color: white;
       }
       .input-premium {
         background: rgba(2, 6, 23, 0.6) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        transition: 0.3s;
-        color: white;
+        transition: 0.3s; color: white;
       }
-      .input-premium:focus {
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        transform: translateY(-2px);
-      }
-
-      /* Swiper Custom */
-      .swiper {
-        width: 100%;
-        border-radius: 2.5rem;
-        overflow: hidden;
-        margin-bottom: 2rem;
-      }
-      .slide-content {
-        height: 280px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-size: cover;
-        background-position: center;
-        position: relative;
-      }
-      .slide-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to bottom, transparent, rgba(2, 6, 23, 0.9));
-      }
-      .slide-text {
-        position: relative;
-        z-index: 10;
-        text-align: center;
-      }
-
-      .package-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 1.5rem;
-        padding: 1.25rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-align: center;
-        position: relative;
-      }
-      .package-card:hover:not(.disabled) {
-        border-color: #3b82f6;
-        transform: translateY(-5px);
-        background: rgba(59, 130, 246, 0.05);
-      }
-      .package-card.selected {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%);
-        border-color: #3b82f6;
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-      }
-      .package-card.selected::before {
-        content: "✓";
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: #3b82f6;
-        color: white;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        font-size: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .package-card.disabled {
-        opacity: 0.3;
-        filter: grayscale(1);
-        cursor: not-allowed;
-        border-style: dashed;
-      }
-
-      .glow-button {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        transition: all 0.3s ease;
-        color: white;
-      }
-      .modal-bg {
-        background: rgba(2, 6, 23, 0.9);
-        backdrop-filter: blur(15px);
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 500;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .active-modal {
-        display: flex !important;
-      }
-
-      /* Discord Button */
-      .discord-float {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        z-index: 1000;
-        text-decoration: none;
-      }
-      .discord-btn {
-        width: 60px;
-        height: 60px;
-        background: #5865f2;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        box-shadow: 0 10px 25px rgba(88, 101, 242, 0.4);
-        transition: 0.3s;
-      }
-      .discord-btn:hover {
-        transform: scale(1.1) rotate(5deg);
-      }
-      .discord-btn::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: #5865f2;
-        border-radius: 20px;
-        z-index: -1;
-        animation: discord-pulse 2s infinite;
-      }
-      @keyframes discord-pulse {
-        0% {
-          transform: scale(1);
-          opacity: 0.6;
-        }
-        100% {
-          transform: scale(1.6);
-          opacity: 0;
-        }
-      }
-
-      .star-cb-group {
-        font-size: 0;
-        unicode-bidi: bidi-override;
-        direction: rtl;
-      }
-      .star-cb-group > input {
-        display: none;
-      }
-      .star-cb-group > label {
-        display: inline-block;
-        font-size: 2rem;
-        cursor: pointer;
-        color: #334155;
-      }
-      .star-cb-group > input:checked ~ label {
-        color: #f59e0b;
-      }
-
-      .game-header {
-        background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent);
-        padding: 15px 25px;
-        border-radius: 1.5rem;
-        border-left: 4px solid #3b82f6;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      /* Promo PopUp Animation */
-      @keyframes popIn {
-        0% {
-          transform: scale(0.9);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-      .animate-popIn {
-        animation: popIn 0.3s ease-out forwards;
-      }
+      .input-premium:focus { border-color: #3b82f6 !important; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); transform: translateY(-2px); }
+      .swiper { width: 100%; border-radius: 2.5rem; overflow: hidden; margin-bottom: 2rem; }
+      .slide-content { height: 280px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-size: cover; background-position: center; position: relative; }
+      .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(2, 6, 23, 0.9)); }
+      .slide-text { position: relative; z-index: 10; text-align: center; }
+      .package-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1.5rem; padding: 1.25rem; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; }
+      .package-card:hover:not(.disabled) { border-color: #3b82f6; transform: translateY(-5px); background: rgba(59, 130, 246, 0.05); }
+      .package-card.selected { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+      .package-card.selected::before { content: "✓"; position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+      .package-card.disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border-style: dashed; }
+      .glow-button { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; color: white; }
+      .modal-bg { background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(15px); display: none; position: fixed; inset: 0; z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+      .active-modal { display: flex !important; }
+      .star-cb-group { font-size: 0; unicode-bidi: bidi-override; direction: rtl; }
+      .star-cb-group > input { display: none; }
+      .star-cb-group > label { display: inline-block; font-size: 2rem; cursor: pointer; color: #334155; }
+      .star-cb-group > input:checked ~ label { color: #f59e0b; }
+      @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+      .animate-popIn { animation: popIn 0.3s ease-out forwards; }
     </style>
   </head>
+
   <body class="flex flex-col lg:flex-row overflow-x-hidden">
+    
     <div id="promo-modal" class="modal-bg active-modal z-[600]">
       <div class="glass-card w-full max-w-lg p-3 rounded-[2.5rem] border-blue-500/30 shadow-2xl relative animate-popIn">
         <button onclick="closePromo()" class="absolute -top-3 -right-3 w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center z-50 shadow-lg transition-all hover:scale-110">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-
-        <div class="relative rounded-[2rem] overflow-hidden bg-[#0f172a] h-80 flex items-center justify-center bg-cover bg-center" style="background-image: url(&quot;foto/promo_banner.png&quot;)">
+        <div class="relative rounded-[2rem] overflow-hidden bg-[#0f172a] h-80 flex items-center justify-center bg-cover bg-center" style="background-image: url('foto/promo_banner.png')">
           <div class="absolute inset-0 bg-gradient-to-b from-blue-900/50 to-[#020617]"></div>
-
           <div class="relative z-10 text-center p-8">
             <div class="bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase px-4 py-1.5 rounded-full inline-block mb-4 tracking-widest border border-blue-500/30">Limited Offer</div>
             <h2 class="text-5xl font-black italic uppercase text-white tracking-tighter leading-none mb-3">MEGA<br /><span class="text-blue-500">SALE</span></h2>
             <p class="text-slate-300 text-xs font-bold uppercase tracking-wider mb-6">Dapatkan Bonus s/d 20% Robux<br />Setiap Pembelian Paket Tertentu!</p>
-
             <button onclick="closePromo()" class="glow-button px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest">Sikat Sekarang!</button>
           </div>
-
-          <div class="absolute bottom-4 right-4 text-6xl opacity-20">💎</div>
-          <div class="absolute top-4 left-4 text-6xl opacity-10">🎁</div>
         </div>
       </div>
     </div>
@@ -299,6 +116,20 @@
       </div>
     </div>
 
+    <div id="history-detail-modal" class="modal-bg z-[560]">
+      <div class="glass-card w-full max-w-md p-10 rounded-[3rem] border-t-4 border-blue-600 relative animate-popIn">
+        <button onclick="closeHistoryDetail()" class="absolute top-6 right-6 p-2 bg-white/5 hover:bg-red-600/20 rounded-full text-white transition-all group">
+            <svg class="w-5 h-5 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="text-center mb-8">
+            <div class="text-3xl font-black italic text-white uppercase tracking-tighter">ORDER<span class="text-blue-500">DETAIL</span></div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Transaction Receipt</p>
+        </div>
+        <div id="history-detail-content" class="space-y-6"></div>
+        <button onclick="closeHistoryDetail()" class="glow-button w-full py-5 rounded-2xl font-black text-xs uppercase mt-10 tracking-widest">Close Receipt</button>
+      </div>
+    </div>
+
     <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-6 text-center overflow-y-auto">
       <div class="glass-card w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] my-8">
         <h2 class="text-3xl lg:text-4xl font-black mb-2 text-white italic">RBX<span class="text-blue-500">STORE</span></h2>
@@ -317,36 +148,15 @@
       </div>
     </div>
 
-    <div class="lg:hidden w-full p-5 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-[50]">
-      <div class="text-2xl font-black tracking-tighter text-white uppercase italic">RBX<span class="text-blue-500">STORE</span></div>
-      <button onclick="toggleSidebar()" class="p-2 bg-blue-500/10 rounded-xl text-blue-500">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-      </button>
-    </div>
-
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-[#020617] lg:bg-[#020617]/50 border-r border-white/5 p-10 flex flex-col z-[60] -translate-x-full lg:translate-x-0 lg:sticky lg:h-screen text-center">
       <div class="text-3xl font-black mb-16 italic text-white tracking-tighter">RBX<span class="text-blue-500">.</span></div>
       <nav class="flex-1 space-y-6 text-left">
-        <div onclick="showPage('home')" id="nav-home" class="sidebar-item active p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase">
-          <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-          Home
-        </div>
-        <div onclick="showPage('riwayat')" id="nav-riwayat" class="sidebar-item p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase">
-          <div class="w-2 h-2 rounded-full bg-slate-700"></div>
-          History
-        </div>
+        <div onclick="showPage('home')" id="nav-home" class="sidebar-item active p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Home</div>
+        <div onclick="showPage('riwayat')" id="nav-riwayat" class="sidebar-item p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-slate-700"></div> History</div>
       </nav>
       <div class="mt-auto border-t border-white/5 pt-6 text-center">
         <p id="user-display" class="text-[9px] font-black text-slate-500 mb-3 truncate uppercase tracking-widest"></p>
         <button onclick="handleLogout()" class="w-full text-[9px] font-black text-red-500 tracking-widest hover:text-red-400 transition uppercase italic mb-4">Logout Access</button>
-        <div class="contact-info-wrapper glass-card p-4 rounded-2xl text-left">
-          <h5 class="text-[10px] font-black text-white uppercase mb-3 italic">Hubungi Kami</h5>
-          <div class="space-y-2 text-slate-400 text-[8px] font-bold">
-            <div class="flex items-center gap-2 truncate"><span class="text-blue-500">✉</span> mputramadhaniid@gmail.com</div>
-            <div class="flex items-center gap-2"><span class="text-blue-500">IG</span> @putramdhanii_</div>
-            <div class="flex items-center gap-2"><span class="text-blue-500">DS</span> @thiss_putradis</div>
-          </div>
-        </div>
       </div>
     </aside>
 
@@ -354,42 +164,7 @@
       <section id="page-home">
         <div class="swiper mySwiper shadow-2xl shadow-blue-500/10">
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="slide-content" style="background-image: url(&quot;foto/banner1.png&quot;); background-color: #1e293b">
-                <div class="slide-overlay"></div>
-                <div class="slide-text p-6">
-                  <h2 class="text-4xl font-black italic uppercase text-white">RBX STORE</h2>
-                  <p class="text-blue-400 font-bold text-xs uppercase tracking-widest">Premium Robux Service</p>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="slide-content" style="background-image: url(&quot;foto/banner2.png&quot;); background-color: #0f172a">
-                <div class="slide-overlay"></div>
-                <div class="slide-text p-6">
-                  <h2 class="text-4xl font-black italic uppercase text-white">INSTANT PROCESS</h2>
-                  <p class="text-emerald-400 font-bold text-xs uppercase tracking-widest">Aman & Terpercaya 100%</p>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="slide-content" style="background-image: url(&quot;foto/banner3.png&quot;); background-color: #1e1b4b">
-                <div class="slide-overlay"></div>
-                <div class="slide-text p-6">
-                  <h2 class="text-4xl font-black italic uppercase text-white">CHEAP PRICE</h2>
-                  <p class="text-yellow-400 font-bold text-xs uppercase tracking-widest">Harga Termurah Se-Indonesia</p>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="slide-content" style="background-image: url(&quot;foto/banner4.png&quot;); background-color: #312e81">
-                <div class="slide-overlay"></div>
-                <div class="slide-text p-6">
-                  <h2 class="text-4xl font-black italic uppercase text-white">SUPPORT 24/7</h2>
-                  <p class="text-pink-400 font-bold text-xs uppercase tracking-widest">Hubungi Discord Kami Kapan Saja</p>
-                </div>
-              </div>
-            </div>
+            <div class="swiper-slide"><div class="slide-content" style="background-image: url('foto/banner1.png'); background-color: #1e293b"><div class="slide-overlay"></div><div class="slide-text p-6"><h2 class="text-4xl font-black italic uppercase text-white">RBX STORE</h2><p class="text-blue-400 font-bold text-xs uppercase tracking-widest">Premium Robux Service</p></div></div></div>
           </div>
           <div class="swiper-pagination"></div>
         </div>
@@ -400,10 +175,6 @@
               <div class="absolute top-0 right-0 p-10 opacity-10 text-8xl">💎</div>
               <div class="text-[10px] font-black text-blue-400 uppercase mb-1 italic tracking-widest">GLOBAL STOCK INVENTORY</div>
               <div class="text-5xl font-black text-white tracking-tighter" id="stok-display">0Robux</div>
-              <div class="mt-2 flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span class="text-[9px] font-bold text-slate-500 uppercase">Live Update System</span>
-              </div>
             </div>
           </div>
 
@@ -415,20 +186,10 @@
                 <input type="text" id="discord_user" placeholder="Username Discord" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic text-sm" />
               </div>
             </div>
-
             <h3 class="text-xs font-black text-blue-500 uppercase mb-8 italic ml-4 text-left">2. Select Product Robux</h3>
             <div id="robux-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-14 text-center"></div>
-
             <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic ml-4 text-left">3. Select Product Gamepass</h3>
-            <div class="game-header">
-              <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-blue-900/40">🎣</div>
-              <div>
-                <h4 class="text-white font-black italic text-xl uppercase">Memancing Ikan itu!</h4>
-                <p class="text-slate-500 text-[10px] font-bold uppercase">Exclusive Items</p>
-              </div>
-            </div>
             <div id="gamepass-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10 text-center"></div>
-
             <button onclick="checkStockAndOpenQris()" class="glow-button w-full py-6 rounded-[2rem] text-white font-black uppercase text-sm mt-8">Confirm & Buy Now</button>
           </div>
 
@@ -445,15 +206,6 @@
         <div id="riwayat-list" class="grid grid-cols-1 gap-4"></div>
       </section>
     </main>
-
-    <a href="https://discord.com/users/689328089104515161" target="_blank" class="discord-float"
-      ><div class="discord-btn">
-        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path
-            d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
-          />
-        </svg></div
-    ></a>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -473,29 +225,17 @@
       const auth = getAuth(app);
       const db = getDatabase(app);
       const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1473231285924265994/pWp8ggIvgfzoZwFPnudv5z6m354LGUrUcIwVPmLptP3fO7BB74j2fhXN0Jv7zi5eki3R";
+      
       let globalStock = 0;
       let selectedPackage = null;
       let lastNotifKey = null;
+      let isWebhookProcessing = false; // ANTI-DUPLICATE FLAG
 
-      // Swiper Init
-      new Swiper(".mySwiper", {
-        loop: true,
-        autoplay: { delay: 3000, disableOnInteraction: false },
-        pagination: { el: ".swiper-pagination", clickable: true },
-        effect: "fade",
-        fadeEffect: { crossFade: true },
-      });
+      new Swiper(".mySwiper", { loop: true, autoplay: { delay: 3000 }, pagination: { el: ".swiper-pagination" }, effect: "fade" });
 
-      // FUNGSI CLOSE PROMO
-      window.closePromo = () => {
-        document.getElementById("promo-modal").classList.remove("active-modal");
-      };
+      window.closePromo = () => document.getElementById("promo-modal").classList.remove("active-modal");
 
-      function sensorEmail(email) {
-        if (!email) return "Guest";
-        let parts = email.split("@");
-        return parts[0].substring(0, 3) + "****@" + parts[1];
-      }
+      function sensorEmail(email) { if (!email) return "Guest"; let parts = email.split("@"); return parts[0].substring(0, 3) + "****@" + parts[1]; }
 
       window.popStatus = (type, title, msg) => {
         const modal = document.getElementById("status-modal");
@@ -509,11 +249,47 @@
 
       window.confirmPopup = async () => {
         const uid = auth.currentUser.uid;
-        if (lastNotifKey) {
-          await remove(ref(db, `notif_popup/${uid}/${lastNotifKey}`));
-          lastNotifKey = null;
-        }
+        if (lastNotifKey) { await remove(ref(db, `notif_popup/${uid}/${lastNotifKey}`)); lastNotifKey = null; }
         document.getElementById("status-modal").classList.remove("active-modal");
+      };
+
+      // DETAIL HISTORY LOGIC
+      window.openHistoryDetail = (data) => {
+          const modal = document.getElementById("history-detail-modal");
+          const content = document.getElementById("history-detail-content");
+          const isSuccess = data.status === "success";
+
+          content.innerHTML = `
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/5 p-4 rounded-2xl">
+                    <div class="text-[9px] font-black text-blue-500 uppercase italic mb-1">Order Status</div>
+                    <div class="text-sm font-black ${isSuccess ? 'text-emerald-500' : 'text-red-500'} italic uppercase">${data.status}</div>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl">
+                    <div class="text-[9px] font-black text-blue-500 uppercase italic mb-1">Time Issued</div>
+                    <div class="text-[11px] font-black text-white italic uppercase">${data.time}</div>
+                </div>
+            </div>
+            <div class="bg-white/5 p-6 rounded-[2rem] border border-white/5">
+                <div class="text-[9px] font-black text-slate-500 uppercase italic mb-4">Account Information</div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400">ROBLOX USER</span><span class="text-sm font-black text-white uppercase italic">${data.roblox}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400">DISCORD</span><span class="text-sm font-black text-white italic">${data.discord || '-'}</span></div>
+                </div>
+            </div>
+            <div class="bg-blue-600/5 p-6 rounded-[2rem] border border-blue-600/10">
+                <div class="text-[9px] font-black text-blue-500 uppercase italic mb-2">Package Selected</div>
+                <div class="text-xl font-black text-white uppercase italic tracking-tighter">${data.produk}</div>
+                ${!isSuccess ? `<div class="mt-4 pt-4 border-t border-blue-600/10"><div class="text-[9px] font-black text-red-400 uppercase italic mb-1">Admin Remark</div><div class="text-xs text-slate-300 italic">${data.reason || 'Data tidak valid'}</div></div>` : ''}
+            </div>
+          `;
+          modal.classList.add("active-modal");
+          document.body.style.overflow = "hidden";
+      };
+
+      window.closeHistoryDetail = () => {
+          document.getElementById("history-detail-modal").classList.remove("active-modal");
+          document.body.style.overflow = "auto";
       };
 
       onAuthStateChanged(auth, (user) => {
@@ -528,13 +304,7 @@
 
       function monitorPopup(uid) {
         onValue(ref(db, `notif_popup/${uid}`), (snap) => {
-          if (snap.exists()) {
-            snap.forEach((c) => {
-              const d = c.val();
-              lastNotifKey = c.key;
-              popStatus(d.type, d.title, d.msg);
-            });
-          }
+          if (snap.exists()) { snap.forEach((c) => { const d = c.val(); lastNotifKey = c.key; popStatus(d.type, d.title, d.msg); }); }
         });
       }
 
@@ -545,37 +315,22 @@
       });
 
       function loadProducts() {
-        onValue(
-          ref(db, "produk"),
-          (snap) => {
-            const rGrid = document.getElementById("robux-grid");
-            const gGrid = document.getElementById("gamepass-grid");
-            rGrid.innerHTML = "";
-            gGrid.innerHTML = "";
-            let all = [];
-            snap.forEach((c) => {
-              all.push({ key: c.key, ...c.val() });
-            });
-            all.sort((a, b) => (parseInt(a.amount.replace(/\D/g, "")) || 0) - (parseInt(b.amount.replace(/\D/g, "")) || 0));
-            all.forEach((d) => {
-              const t = d.type || "Robux";
-              const buyAmt = parseInt(d.amount.replace(/\D/g, "")) || 0;
-              const isOutOfStock = t === "Robux" && buyAmt > globalStock;
-              const card = document.createElement("div");
-              card.className = `package-card ${isOutOfStock ? "disabled" : ""}`;
-              card.innerHTML = `<div class="text-2xl mb-2">${t === "Robux" ? "💎" : "🎁"}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1">${t}</div><div class="text-[11px] font-black text-white italic mb-1 uppercase">${d.amount} ${t === "Robux" ? "Robux" : ""}</div><div class="text-[9px] font-bold text-slate-500">Rp ${d.price}</div>`;
-              if (!isOutOfStock)
-                card.onclick = () => {
-                  document.querySelectorAll(".package-card").forEach((x) => x.classList.remove("selected"));
-                  card.classList.add("selected");
-                  selectedPackage = d;
-                };
-              if (t === "Robux") rGrid.appendChild(card);
-              else gGrid.appendChild(card);
-            });
-          },
-          { onlyOnce: true },
-        );
+        onValue(ref(db, "produk"), (snap) => {
+          const rGrid = document.getElementById("robux-grid");
+          const gGrid = document.getElementById("gamepass-grid");
+          rGrid.innerHTML = ""; gGrid.innerHTML = "";
+          let all = []; snap.forEach((c) => { all.push({ key: c.key, ...c.val() }); });
+          all.forEach((d) => {
+            const t = d.type || "Robux";
+            const buyAmt = parseInt(d.amount.replace(/\D/g, "")) || 0;
+            const isOutOfStock = t === "Robux" && buyAmt > globalStock;
+            const card = document.createElement("div");
+            card.className = `package-card ${isOutOfStock ? "disabled" : ""}`;
+            card.innerHTML = `<div class="text-2xl mb-2">${t === "Robux" ? "💎" : "🎁"}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1">${t}</div><div class="text-[11px] font-black text-white italic mb-1 uppercase">${d.amount} ${t === "Robux" ? "Robux" : ""}</div><div class="text-[9px] font-bold text-slate-500">Rp ${d.price}</div>`;
+            if (!isOutOfStock) card.onclick = () => { document.querySelectorAll(".package-card").forEach((x) => x.classList.remove("selected")); card.classList.add("selected"); selectedPackage = d; };
+            if (t === "Robux") rGrid.appendChild(card); else gGrid.appendChild(card);
+          });
+        }, { onlyOnce: true });
       }
 
       window.checkStockAndOpenQris = () => {
@@ -585,13 +340,20 @@
         document.getElementById("qris-modal").classList.add("active-modal");
       };
 
+      // DISCORD NEW ORDER WEBHOOK (ANTI-DUPLICATE)
       window.confirmQris = async () => {
+        if (isWebhookProcessing) return; // LOCK
+
         const r = document.getElementById("roblox_user").value;
         const d = document.getElementById("discord_user").value;
         const u = auth.currentUser;
         const censored = sensorEmail(u.email);
+
+        isWebhookProcessing = true; // START LOCK
+
         try {
           await set(ref(db, `orders_active/${u.uid}`), { uid: u.uid, email: u.email, roblox: r, discord: d, produk: selectedPackage.display, type: selectedPackage.type || "Robux", time: new Date().toLocaleString(), status: "pending" });
+          
           const embed = {
             title: "📑 INVOICE - NEW ORDER",
             color: 3447003,
@@ -604,44 +366,63 @@
             ],
             timestamp: new Date(),
           };
-          await fetch(DISCORD_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [embed] }) });
+
+          await fetch(DISCORD_WEBHOOK_URL, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" }, 
+            body: JSON.stringify({ embeds: [embed] }) 
+          });
+
           document.getElementById("qris-modal").classList.remove("active-modal");
           window.open("https://discord.com/users/689328089104515161", "_blank");
-        } catch (e) {
-          popStatus("error", "SYSTEM ERROR", e.message);
+        } catch (e) { 
+          popStatus("error", "SYSTEM ERROR", e.message); 
+        } finally {
+          isWebhookProcessing = false; // RELEASE LOCK
         }
       };
 
+      // DISCORD RATING WEBHOOK (ANTI-DUPLICATE)
       window.submitRating = async () => {
+        if (isWebhookProcessing) return; // LOCK
+
         const oKey = document.getElementById("rate-order-id").value;
         const stars = document.querySelector('input[name="rating"]:checked')?.value;
         const comm = document.getElementById("rate-comment").value || "No comment";
         const user = auth.currentUser;
         const censored = sensorEmail(user.email);
+
         if (!stars) return popStatus("error", "RATING EMPTY", "Pilih bintang.");
+
+        isWebhookProcessing = true; // START LOCK
+
         try {
           await update(ref(db, `riwayat/${user.uid}/${oKey}`), { rating: stars, testimoni: comm });
+          
           await fetch(DISCORD_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               embeds: [
                 {
-                  title: "⭐ FEEDBACK",
+                  title: "⭐ FEEDBACK - RBX STORE",
                   color: 16111360,
                   fields: [
-                    { name: "👤 Pembeli", value: `\`${censored}\``, inline: true },
-                    { name: "✨ Rating", value: "⭐".repeat(stars), inline: true },
-                    { name: "💬 Komentar", value: comm },
+                    { name: "👤 PEMBELI", value: `\`${censored}\``, inline: true },
+                    { name: "✨ RATING", value: "⭐".repeat(stars), inline: true },
+                    { name: "💬 KOMENTAR", value: `\`\`\`${comm}\`\`\`` },
                   ],
+                  timestamp: new Date()
                 },
               ],
             }),
           });
           document.getElementById("rating-modal").classList.remove("active-modal");
           popStatus("success", "THANKS", "Penilaian tersimpan.");
-        } catch (e) {
-          popStatus("error", "FAILED", e.message);
+        } catch (e) { 
+          popStatus("error", "FAILED", e.message); 
+        } finally {
+          isWebhookProcessing = false; // RELEASE LOCK
         }
       };
 
@@ -656,31 +437,27 @@
         onValue(ref(db, `riwayat/${uid}`), (snap) => {
           const list = document.getElementById("riwayat-list");
           list.innerHTML = "";
-          if (!snap.exists()) {
-            list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30">Belum ada riwayat</p>`;
-            return;
-          }
-          const raw = [];
-          snap.forEach((c) => {
-            raw.push({ key: c.key, ...c.val() });
-          });
+          if (!snap.exists()) { list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30">Belum ada riwayat</p>`; return; }
+          let raw = []; snap.forEach((c) => { raw.push({ key: c.key, ...c.val() }); });
           raw.reverse().forEach((d) => {
             const isF = d.status === "failed";
-            const rDisp = isF
-              ? `<div class="text-[9px] text-red-400 font-bold bg-red-500/10 px-3 py-1 rounded-lg uppercase italic mt-1">Reason: ${d.reason || "Invalid"}</div>`
-              : d.rating
-                ? `⭐`.repeat(d.rating)
-                : `<button onclick="openRating('${d.key}', '${d.produk}')" class="bg-blue-500 text-white text-[8px] font-black px-4 py-1.5 rounded-full uppercase italic transition">RATE ORDER</button>`;
-            list.innerHTML += `<div class="glass-card flex flex-col md:flex-row items-center justify-between p-6 lg:p-8 rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 relative text-left">
-                        <div class="flex items-center gap-6">
-                            <div class="w-12 h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-bold">${isF ? "!" : "✓"}</div>
-                            <div><h4 class="text-lg font-black text-white uppercase italic tracking-tighter">${d.produk}</h4><div class="text-[9px] text-slate-500 font-bold mt-1 uppercase">${d.roblox} • ${d.time}</div></div>
-                        </div>
-                        <div class="mt-4 md:mt-0 flex flex-col items-end gap-2">
-                            <div class="text-[10px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase">Status: ${isF ? "Rejected" : "Success"}</div>
-                            ${rDisp}
-                        </div>
-                    </div>`;
+            const card = document.createElement("div");
+            card.className = `glass-card flex flex-col md:flex-row items-center justify-between p-6 lg:p-8 rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 relative text-left cursor-pointer hover:bg-white/[0.05] transition`;
+            
+            card.onclick = (e) => { if(e.target.tagName !== 'BUTTON') openHistoryDetail(d); };
+
+            const rateBtn = (!isF && !d.rating) ? `<button onclick="openRating('${d.key}', '${d.produk}')" class="bg-blue-500 text-white text-[8px] font-black px-4 py-1.5 rounded-full uppercase italic transition hover:scale-105">RATE ORDER</button>` : (d.rating ? "⭐".repeat(d.rating) : "");
+
+            card.innerHTML = `
+                <div class="flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-bold">${isF ? "!" : "✓"}</div>
+                    <div><h4 class="text-lg font-black text-white uppercase italic tracking-tighter">${d.produk}</h4><div class="text-[9px] text-slate-500 font-bold mt-1 uppercase">${d.roblox} • ${d.time}</div></div>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-col items-end gap-2">
+                    <div class="text-[10px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase">Status: ${isF ? "Rejected" : "Success"}</div>
+                    ${rateBtn}
+                </div>`;
+            list.appendChild(card);
           });
         });
       }
@@ -693,18 +470,11 @@
         document.getElementById(`nav-${p}`).classList.add("active");
         if (window.innerWidth < 1024) toggleSidebar();
       };
-      window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById("email-login").value, document.getElementById("pass-login").value).catch((e) => popStatus("error", "LOGIN FAILED", "Email/Password salah"));
+      window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById("email-login").value, document.getElementById("pass-login").value).catch(() => popStatus("error", "LOGIN FAILED", "Email/Password salah"));
       window.handleRegister = () => createUserWithEmailAndPassword(auth, document.getElementById("email-reg").value, document.getElementById("pass-reg").value).catch((e) => popStatus("error", "REGISTRATION FAILED", e.message));
       window.handleLogout = () => signOut(auth);
-      window.toggleAuth = () => {
-        document.getElementById("login-form").classList.toggle("hidden");
-        document.getElementById("register-form").classList.toggle("hidden");
-      };
-      window.openRating = (oKey, pName) => {
-        document.getElementById("rate-order-id").value = oKey;
-        document.getElementById("rate-produk-name").value = pName;
-        document.getElementById("rating-modal").classList.add("active-modal");
-      };
+      window.toggleAuth = () => { document.getElementById("login-form").classList.toggle("hidden"); document.getElementById("register-form").classList.toggle("hidden"); };
+      window.openRating = (oKey, pName) => { document.getElementById("rate-order-id").value = oKey; document.getElementById("rate-produk-name").value = pName; document.getElementById("rating-modal").classList.add("active-modal"); };
     </script>
   </body>
 </html>
