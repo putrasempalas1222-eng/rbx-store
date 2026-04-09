@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -17,93 +17,764 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <style>
-      :root { --blue-glow: rgba(59, 130, 246, 0.5); }
+      :root {
+        --blue-glow: rgba(59, 130, 246, 0.5);
+        /* Easing elegan ala Apple/Material: Fast-Out, Slow-In */
+        --ease-premium: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
       body {
         font-family: "Plus Jakarta Sans", sans-serif;
         background: #020617;
         color: #f8fafc;
         background-image: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.08) 0, transparent 40%);
-        min-height: 100vh; margin: 0; overflow-x: hidden;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
       }
+
+      /* --- KARTU GLASSMORFISM (UTAMA) --- */
       .glass-card {
-        background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(20px);
+        background: rgba(15, 23, 42, 0.3);
+        backdrop-filter: blur(0px); /* Mulai dari 0 untuk animasi masuk */
         border: 1px solid rgba(255, 255, 255, 0.05);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        transition:
+          backdrop-filter 0.5s var(--ease-premium),
+          border-color 0.3s ease;
       }
-      #sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-      .sidebar-item { transition: 0.4s; cursor: pointer; border-radius: 1rem; }
+
+      /* Animasi masuk untuk kartu: Slide up + Fade in + Blur in */
+      .animate-card-entry {
+        animation: cardEntry 0.6s var(--ease-premium) forwards;
+        opacity: 0;
+        will-change: transform, opacity, backdrop-filter;
+      }
+
+      @keyframes cardEntry {
+        0% {
+          transform: translateY(30px);
+          opacity: 0;
+          backdrop-filter: blur(0px);
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+          backdrop-filter: blur(20px);
+        }
+      }
+
+      /* --- SIDEBAR REVISI --- */
+      #sidebar {
+        transition:
+          transform 0.5s var(--ease-premium),
+          width 0.5s var(--ease-premium);
+        will-change: transform;
+      }
+      .sidebar-item {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-radius: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Efek hover sidebar yang lebih tenang */
+      .sidebar-item:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.03);
+        color: white;
+        transform: translateX(3px);
+      }
+
       .sidebar-item.active {
         background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
-        border-left: 4px solid #3b82f6; color: white;
+        color: white;
       }
+      /* Indikator aktif dengan animasi ekspansi */
+      .sidebar-item.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 15%;
+        height: 70%;
+        width: 4px;
+        background: #3b82f6;
+        border-radius: 0 4px 4px 0;
+        animation: indicatorGrow 0.4s var(--ease-premium);
+      }
+      @keyframes indicatorGrow {
+        0% {
+          transform: scaleY(0);
+        }
+        100% {
+          transform: scaleY(1);
+        }
+      }
+
+      /* --- INPUT PREMIUM --- */
       .input-premium {
         background: rgba(2, 6, 23, 0.6) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        transition: 0.3s; color: white;
+        transition: all 0.3s var(--ease-premium);
+        color: white;
+        will-change: transform, border-color, box-shadow;
       }
-      .input-premium:focus { border-color: #3b82f6 !important; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); transform: translateY(-2px); }
-      .swiper { width: 100%; border-radius: 2.5rem; overflow: hidden; margin-bottom: 2rem; }
-      .slide-content { height: 280px; display: flex; flex-direction: column; justify-content: center; align-items: center; background-size: cover; background-position: center; position: relative; }
-      .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(2, 6, 23, 0.9)); }
-      .slide-text { position: relative; z-index: 10; text-align: center; }
-      .package-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1.5rem; padding: 1.25rem; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; }
-      .package-card:hover:not(.disabled) { border-color: #3b82f6; transform: translateY(-5px); background: rgba(59, 130, 246, 0.05); }
-      .package-card.selected { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-      .package-card.selected::before { content: "✓"; position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; }
-      .package-card.disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border-style: dashed; }
-      .glow-button { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; color: white; }
-      .modal-bg { background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(15px); display: none; position: fixed; inset: 0; z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-      .active-modal { display: flex !important; }
-      .star-cb-group { font-size: 0; unicode-bidi: bidi-override; direction: rtl; }
-      .star-cb-group > input { display: none; }
-      .star-cb-group > label { display: inline-block; font-size: 2rem; cursor: pointer; color: #334155; }
-      .star-cb-group > input:checked ~ label { color: #f59e0b; }
-      @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-      .animate-popIn { animation: popIn 0.3s ease-out forwards; }
+      /* Animasi micro-interaction saat fokus */
+      .input-premium:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.15);
+        transform: translateY(-2px);
+      }
+
+      /* --- SWIPER --- */
+      .swiper {
+        width: 100%;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeIn 1s 0.3s var(--ease-premium) forwards;
+      }
+      @media (min-width: 1024px) {
+        .swiper {
+          border-radius: 2.5rem;
+        }
+      }
+      .slide-content {
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+      @media (min-width: 1024px) {
+        .slide-content {
+          height: 280px;
+        }
+      }
+      .slide-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent, rgba(2, 6, 23, 0.9));
+      }
+
+      /* Animasi teks swiper saat slide aktif */
+      .swiper-slide-active .slide-text h2 {
+        animation: textSlideIn 0.8s 0.2s var(--ease-premium) both;
+      }
+      .swiper-slide-active .slide-text p {
+        animation: textSlideIn 0.8s 0.4s var(--ease-premium) both;
+      }
+      @keyframes textSlideIn {
+        0% {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* --- PACKAGE CARDS --- */
+      .package-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 1.25rem;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.4s var(--ease-premium);
+        text-align: center;
+        position: relative;
+        will-change: transform, box-shadow, background;
+      }
+
+      /* Hover realistis: Mengangkat kartu + Glow lembut */
+      .package-card:hover:not(.disabled):not(.selected) {
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-8px) scale(1.02);
+        background: rgba(59, 130, 246, 0.03);
+        box-shadow:
+          0 20px 30px -10px rgba(0, 0, 0, 0.5),
+          0 0 15px 0 rgba(59, 130, 246, 0.1);
+      }
+
+      .package-card.selected {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.25) 100%);
+        border-color: #3b82f6;
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+        transform: scale(1.03);
+      }
+      /* Animasi checkmark muncul */
+      .package-card.selected::before {
+        content: "✓";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #3b82f6;
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        animation: checkPop 0.4s var(--ease-premium);
+      }
+      @keyframes checkPop {
+        0% {
+          transform: scale(0) rotate(-45deg);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1) rotate(0);
+          opacity: 1;
+        }
+      }
+
+      .package-card.disabled {
+        opacity: 0.2;
+        filter: grayscale(1);
+        cursor: not-allowed;
+        border-style: dashed;
+      }
+
+      .history-card {
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(59, 130, 246, 0.18);
+        box-shadow: 0 24px 45px -22px rgba(0, 0, 0, 0.75);
+      }
+      .history-card:hover {
+        background: rgba(15, 23, 42, 0.85);
+      }
+      .history-stars {
+        display: inline-flex;
+        gap: 0.15rem;
+        font-size: 0.78rem;
+        color: #facc15;
+      }
+      .history-rating-label {
+        color: #94a3b8;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+      }
+      .history-review {
+        color: #cbd5e1;
+        font-size: 0.76rem;
+        line-height: 1.5;
+      }
+      .history-detail-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: start;
+      }
+      .history-detail-badge {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+        padding: 0.65rem 0.85rem;
+        border-radius: 1rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .typing-text {
+        position: relative;
+        display: inline-block;
+      }
+      .typing-text::after {
+        content: "";
+        display: inline-block;
+        width: 0.16em;
+        height: 1.1em;
+        margin-left: 0.15em;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.3));
+        animation: blink-cursor 0.8s steps(1) infinite;
+      }
+      @keyframes blink-cursor {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      .rate-order-btn {
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        color: #eff6ff;
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transition: all 0.25s var(--ease-premium);
+      }
+      .rate-order-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: translateY(-1px);
+      }
+      .rate-order-btn:active {
+        transform: translateY(0);
+      }
+      .star-cb-group {
+        display: inline-flex;
+        gap: 0.4rem;
+        justify-content: center;
+      }
+      .star-cb-group input {
+        display: none;
+      }
+      .star-cb-group label {
+        cursor: pointer;
+        color: #94a3b8;
+        font-size: 1.8rem;
+        transition: color 0.25s ease;
+      }
+      .star-cb-group label.star-active {
+        color: #facc15;
+      }
+
+      /* --- BUTTONS --- */
+      .glow-button {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        transition: all 0.3s var(--ease-premium);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        will-change: transform, box-shadow;
+      }
+      .glow-button:hover {
+        box-shadow:
+          0 10px 25px -5px rgba(59, 130, 246, 0.4),
+          0 0 15px rgba(59, 130, 246, 0.2);
+        transform: translateY(-2px);
+      }
+      .glow-button:active {
+        transform: translateY(1px);
+        scale: 0.98;
+        transition: all 0.1s;
+      }
+
+      /* Efek kilauan shine saat hover */
+      .glow-button::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -100%;
+        width: 50%;
+        height: 200%;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transform: rotate(30deg);
+        transition: 0s;
+      }
+      .glow-button:hover::after {
+        left: 150%;
+        transition: 0.7s var(--ease-premium);
+      }
+
+      /* --- MODAL REVISI (UMUM) --- */
+      .modal-bg {
+        background: rgba(2, 6, 23, 0); /* Mulai transparan */
+        backdrop-filter: blur(0px);
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        transition:
+          background 0.4s ease,
+          backdrop-filter 0.4s ease;
+        will-change: background, backdrop-filter;
+      }
+      .active-modal {
+        display: flex !important;
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(10px);
+      }
+
+      /* Animasi konten modal: Drop in + Fade in */
+      .modal-content-animate {
+        animation: modalDropIn 0.5s 0.1s var(--ease-premium) both;
+        will-change: transform, opacity;
+      }
+      @keyframes modalDropIn {
+        0% {
+          transform: scale(0.9) translateY(-30px);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* =========================================
+         --- CHAT WINDOW REVISI (FULL SOLID & COOL) ---
+         ========================================= */
+      #chat-window {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        will-change: transform, opacity;
+        transition:
+          transform 0.5s var(--ease-premium),
+          opacity 0.5s var(--ease-premium),
+          visibility 0.5s;
+
+        width: 360px;
+        max-width: calc(100vw - 2rem);
+        height: 520px;
+        max-height: calc(100vh - 3.5rem);
+        right: 1.5rem;
+        bottom: 1.5rem;
+
+        background: rgba(15, 23, 42, 0.98);
+        border: 2px solid rgba(59, 130, 246, 0.65);
+        border-radius: 2rem;
+        box-shadow:
+          0 24px 65px -18px rgba(0, 0, 0, 0.8),
+          0 0 35px 0 rgba(59, 130, 246, 0.2);
+        backdrop-filter: blur(18px);
+        overflow: hidden;
+      }
+
+      /* State tersembunyi */
+      .chat-hidden {
+        transform: translateY(40px) scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      /* State muncul */
+      .chat-visible {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      /* Header Chat Solid */
+      #chat-window .chat-header {
+        background: rgba(2, 6, 23, 0.5); /* Sedikit lebih gelap dari body chat */
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      /* Footer/Input Area Chat Solid */
+      #chat-window .chat-footer {
+        background: rgba(2, 6, 23, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      /* Bubble Pesan BOT (Solid Gelap) */
+      .message-animate.bot-message {
+        background: #1e293b !important; /* Slate 800 Solid */
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #e2e8f0 !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Bubble Pesan USER (Solid Biru Premium) */
+      .message-animate.user-message {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; /* Biru Solid Glow */
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      }
+
+      /* Input Chat dalam Jendela Chat */
+      #chat-window .chat-input-field {
+        background: #020617 !important; /* Hitam Solid */
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        border-radius: 12px;
+        color: white;
+      }
+      #chat-window .chat-input-field:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+      }
+
+      /* Tombol Quick Option Chat (Lebih Cool) */
+      .chat-quick-opt,
+      .quick-opt {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        min-width: 100px;
+        max-width: 170px;
+        padding: 0.72rem 1rem;
+        border-radius: 9999px;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        color: #c7d2fe;
+        text-align: center;
+        white-space: normal;
+        word-break: break-word;
+        font-size: 0.82rem;
+        letter-spacing: 0.02em;
+        transition:
+          transform 0.25s var(--ease-premium),
+          background 0.25s var(--ease-premium),
+          border-color 0.25s var(--ease-premium),
+          box-shadow 0.25s var(--ease-premium);
+        box-shadow: 0 10px 22px -18px rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .chat-quick-opt:hover,
+      .quick-opt:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(37, 99, 235, 0.16));
+        color: white;
+        border-color: rgba(59, 130, 246, 0.55);
+        transform: translateY(-1px);
+        box-shadow:
+          0 16px 28px -20px rgba(59, 130, 246, 0.45),
+          0 4px 18px -10px rgba(0, 0, 0, 0.22);
+      }
+      .chat-quick-opt:active,
+      .quick-opt:active {
+        transform: translateY(0);
+        box-shadow: 0 8px 18px -18px rgba(0, 0, 0, 0.4);
+      }
+
+      #chat-messages {
+        background: rgba(15, 23, 42, 0.25);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 1.25rem;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #60a5fa rgba(15, 23, 42, 0.7);
+      }
+      #chat-messages::-webkit-scrollbar {
+        width: 10px;
+      }
+      #chat-messages::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.45);
+        border-radius: 999px;
+      }
+      #chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(59, 130, 246, 0.55);
+        border-radius: 999px;
+      }
+      .message-animate {
+        animation: messageAppear 0.4s var(--ease-premium) both;
+        transform-origin: top left;
+        will-change: transform, opacity;
+        line-height: 1.55;
+      }
+      .message-animate.bot-message,
+      .message-animate.user-message {
+        max-width: 85%;
+        word-break: break-word;
+      }
+      .message-animate.user-message {
+        max-width: 90%;
+      }
+
+      /* Animasi bubble chat muncul */
+      .message-animate {
+        animation: messageAppear 0.4s var(--ease-premium) both;
+        transform-origin: top left;
+        will-change: transform, opacity;
+      }
+      .message-animate.user-message {
+        transform-origin: top right;
+      }
+      @keyframes messageAppear {
+        0% {
+          transform: scale(0.5) translateY(10px);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* ========================================= */
+
+      /* --- HELPER ANIMATIONS --- */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Mengalirkan animasi elemen anak (Stagger) */
+      .stagger-children > * {
+        opacity: 0;
+      }
+      .stagger-children.active > *:nth-child(1) {
+        animation: cardEntry 0.6s 0.1s var(--ease-premium) forwards;
+      }
+      .stagger-children.active > *:nth-child(2) {
+        animation: cardEntry 0.6s 0.2s var(--ease-premium) forwards;
+      }
+      .stagger-children.active > *:nth-child(3) {
+        animation: cardEntry 0.6s 0.3s var(--ease-premium) forwards;
+      }
+
+      /* --- PC DRAG SCROLL --- */
+      .scroll-container {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        cursor: grab;
+        scrollbar-width: thin;
+        scrollbar-color: #60a5fa rgba(15, 23, 42, 0.7);
+        scroll-snap-type: x mandatory;
+      }
+      .scroll-container > * {
+        scroll-snap-align: start;
+      }
+      .scroll-container::-webkit-scrollbar {
+        height: 9px;
+      }
+      .scroll-container::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.35);
+        border-radius: 999px;
+      }
+      .scroll-container::-webkit-scrollbar-thumb {
+        background: rgba(59, 130, 246, 0.6);
+        border-radius: 999px;
+      }
+
+      @media (max-width: 1024px) {
+        #chat-window {
+          width: calc(100% - 1.5rem) !important;
+          max-width: 100%;
+          height: min(76vh, 470px) !important;
+          max-height: calc(100vh - 2.5rem) !important;
+          right: 0.75rem !important;
+          left: 0.75rem !important;
+          bottom: 0.75rem !important;
+          border-radius: 1.75rem;
+        }
+        #chat-window .chat-header,
+        #chat-window .chat-footer {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        #chat-window .chat-footer .flex {
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        #chat-window .chat-input-field {
+          font-size: 0.88rem;
+          padding: 0.85rem 0.95rem;
+        }
+        #chat-window .chat-footer button {
+          min-width: 42px;
+          padding: 0.85rem;
+        }
+        .chat-quick-opt,
+        .quick-opt {
+          min-width: 92px;
+          padding: 0.65rem 0.9rem;
+          font-size: 0.76rem;
+        }
+        .scroll-container {
+          gap: 6px;
+          padding-bottom: 8px;
+          justify-content: center;
+        }
+        .chat-footer {
+          padding-bottom: 0.9rem;
+        }
+        .chat-header {
+          gap: 0.75rem;
+        }
+
+        .sidebar-open {
+          transform: translateX(0) !important;
+          box-shadow: 20px 0 50px rgba(0, 0, 0, 0.8);
+        }
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0);
+          z-index: 55;
+          transition: background 0.4s ease;
+        }
+        .sidebar-overlay.active {
+          display: block;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+        }
+      }
     </style>
   </head>
 
   <body class="flex flex-col lg:flex-row overflow-x-hidden">
-    
+    <div class="lg:hidden flex items-center justify-between p-6 bg-[#020617]/80 backdrop-blur-md sticky top-0 z-[100] border-b border-white/5">
+      <div class="text-2xl font-black italic text-white tracking-tighter fade-in-quick">RBX<span class="text-blue-500">.</span></div>
+      <button onclick="toggleSidebar()" class="p-2 text-white hover:text-blue-400 transition-colors">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      </button>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div id="promo-modal" class="modal-bg active-modal z-[600]">
-      <div class="glass-card w-full max-w-lg p-3 rounded-[2.5rem] border-blue-500/30 shadow-2xl relative animate-popIn">
-        <button onclick="closePromo()" class="absolute -top-3 -right-3 w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center z-50 shadow-lg transition-all hover:scale-110">
+      <div class="glass-card modal-content-animate w-full max-w-lg p-3 rounded-[2.5rem] border-blue-500/30 shadow-2xl relative">
+        <button onclick="closePromo()" class="absolute -top-3 -right-3 w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center z-50 shadow-lg transition-all hover:scale-110 active:scale-95">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="relative rounded-[2rem] overflow-hidden bg-[#0f172a] h-80 flex items-center justify-center bg-cover bg-center" style="background-image: url('foto/promo_banner.png')">
+        <div class="relative rounded-[2rem] overflow-hidden bg-[#0f172a] h-64 lg:h-80 flex items-center justify-center bg-cover bg-center" style="background-image: url(&quot;foto/promo_banner.png&quot;)">
           <div class="absolute inset-0 bg-gradient-to-b from-blue-900/50 to-[#020617]"></div>
-          <div class="relative z-10 text-center p-8">
-            <div class="bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase px-4 py-1.5 rounded-full inline-block mb-4 tracking-widest border border-blue-500/30">Limited Offer</div>
-            <h2 class="text-5xl font-black italic uppercase text-white tracking-tighter leading-none mb-3">MEGA<br /><span class="text-blue-500">SALE</span></h2>
-            <p class="text-slate-300 text-xs font-bold uppercase tracking-wider mb-6">Dapatkan Bonus s/d 20% Robux<br />Setiap Pembelian Paket Tertentu!</p>
-            <button onclick="closePromo()" class="glow-button px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest">Sikat Sekarang!</button>
+          <div class="relative z-10 text-center p-6 lg:p-8">
+            <div class="bg-blue-500/20 text-blue-400 text-[9px] lg:text-[10px] font-black uppercase px-4 py-1.5 rounded-full inline-block mb-4 tracking-widest border border-blue-500/30">Limited Offer</div>
+            <h2 class="text-4xl lg:text-5xl font-black italic uppercase text-white tracking-tighter leading-none mb-3">MEGA<br /><span class="text-blue-500">SALE</span></h2>
+            <p class="text-slate-300 text-[10px] lg:text-xs font-bold uppercase tracking-wider mb-6">Dapatkan Bonus s/d 20% Robux<br />Setiap Pembelian!</p>
+            <button onclick="closePromo()" class="glow-button px-8 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest">Sikat Sekarang!</button>
           </div>
         </div>
       </div>
     </div>
 
     <div id="status-modal" class="modal-bg z-[550]">
-      <div class="glass-card w-full max-w-sm p-10 rounded-[3rem] text-center border-white/10 shadow-2xl">
-        <div id="status-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"></div>
-        <h3 id="status-title" class="text-2xl font-black mb-3 text-white uppercase italic">NOTIFICATION</h3>
-        <p id="status-msg" class="text-xs text-slate-400 mb-8 leading-relaxed font-bold uppercase tracking-widest"></p>
-        <button onclick="confirmPopup()" class="w-full py-5 rounded-2xl font-black text-xs text-white uppercase bg-blue-600 shadow-xl hover:scale-105 transition">Okey, Saya Mengerti</button>
+      <div class="glass-card modal-content-animate w-full max-w-sm p-8 lg:p-10 rounded-[2.5rem] lg:rounded-[3rem] text-center border-white/10 shadow-2xl">
+        <div id="status-icon" class="w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl lg:text-4xl"></div>
+        <h3 id="status-title" class="text-xl lg:text-2xl font-black mb-3 text-white uppercase italic">NOTIFICATION</h3>
+        <p id="status-msg" class="text-[10px] text-slate-400 mb-8 leading-relaxed font-bold uppercase tracking-widest"></p>
+        <button onclick="confirmPopup()" class="w-full glow-button py-4 lg:py-5 rounded-2xl font-black text-[10px] text-white uppercase shadow-xl">Okey, Saya Mengerti</button>
       </div>
     </div>
 
-    <div id="qris-modal" class="modal-bg fixed inset-0 z-[110] items-center justify-center p-6">
-      <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center border-blue-500/30">
-        <h3 class="text-xl font-black mb-4 text-blue-400 uppercase italic">QRIS Payment</h3>
-        <div class="bg-white p-3 rounded-3xl mb-4 inline-block shadow-lg">
-          <img src="foto/qris.png" alt="QRIS" class="w-56 h-auto mx-auto rounded-xl" />
+    <div id="qris-modal" class="modal-bg fixed inset-0 z-[110] items-center justify-center p-4 lg:p-6">
+      <div class="glass-card modal-content-animate w-full max-w-sm p-6 lg:p-8 rounded-[2.5rem] text-center border-blue-500/30">
+        <h3 class="text-lg lg:text-xl font-black mb-4 text-blue-400 uppercase italic">QRIS Payment</h3>
+        <div class="bg-white p-2 rounded-2xl mb-4 inline-block shadow-lg">
+          <img src="foto/qris.png" alt="QRIS" class="w-48 lg:w-56 h-auto mx-auto rounded-xl" />
         </div>
-        <p class="text-[10px] text-slate-400 uppercase font-bold italic">Scan & konfirmasi ke Discord.</p>
-        <button onclick="confirmQris()" class="glow-button w-full py-4 rounded-2xl font-black text-xs text-white mt-4 uppercase">OK, KONFIRMASI DISCORD</button>
+        <p class="text-[9px] text-slate-400 uppercase font-bold italic">Scan & konfirmasi ke Discord.</p>
+        <button onclick="confirmQris()" class="glow-button w-full py-4 rounded-2xl font-black text-[10px] text-white mt-4 uppercase shine-effect">OK, KONFIRMASI DISCORD</button>
       </div>
     </div>
 
     <div id="rating-modal" class="modal-bg fixed inset-0 z-[250] items-center justify-center p-6">
-      <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center">
+      <div class="glass-card modal-content-animate w-full max-w-sm p-8 rounded-[2.5rem] text-center">
         <h3 class="text-xl font-black mb-1 text-white uppercase italic">Rate Your Order</h3>
         <div class="star-cb-group mb-6 mx-auto">
           <input type="radio" id="rating-5" name="rating" value="5" /><label for="rating-5">★</label> <input type="radio" id="rating-4" name="rating" value="4" /><label for="rating-4">★</label>
@@ -117,92 +788,203 @@
     </div>
 
     <div id="history-detail-modal" class="modal-bg z-[560]">
-      <div class="glass-card w-full max-w-md p-10 rounded-[3rem] border-t-4 border-blue-600 relative animate-popIn">
-        <button onclick="closeHistoryDetail()" class="absolute top-6 right-6 p-2 bg-white/5 hover:bg-red-600/20 rounded-full text-white transition-all group">
-            <svg class="w-5 h-5 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round"/></svg>
+      <div class="glass-card modal-content-animate w-full max-w-md p-6 lg:p-10 rounded-[2rem] lg:rounded-[3rem] border-t-4 border-blue-600 relative">
+        <button onclick="closeHistoryDetail()" class="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-white hover:bg-red-600/20 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" /></svg>
         </button>
-        <div class="text-center mb-8">
-            <div class="text-3xl font-black italic text-white uppercase tracking-tighter">ORDER<span class="text-blue-500">DETAIL</span></div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Transaction Receipt</p>
+        <div class="text-center mb-6 lg:mb-8">
+          <div class="text-2xl lg:text-3xl font-black italic text-white uppercase tracking-tighter">ORDER<span class="text-blue-500">DETAIL</span></div>
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Transaction Receipt</p>
         </div>
-        <div id="history-detail-content" class="space-y-6"></div>
-        <button onclick="closeHistoryDetail()" class="glow-button w-full py-5 rounded-2xl font-black text-xs uppercase mt-10 tracking-widest">Close Receipt</button>
+        <div id="history-detail-content" class="space-y-4 lg:space-y-6"></div>
+        <button onclick="closeHistoryDetail()" class="glow-button w-full py-4 lg:py-5 rounded-2xl font-black text-[10px] lg:text-xs uppercase mt-8 tracking-widest">Close Receipt</button>
       </div>
     </div>
 
-    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-6 text-center overflow-y-auto">
-      <div class="glass-card w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] my-8">
+    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-4 text-center overflow-y-auto">
+      <div class="glass-card modal-content-animate w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] my-auto">
         <h2 class="text-3xl lg:text-4xl font-black mb-2 text-white italic">RBX<span class="text-blue-500">STORE</span></h2>
-        <div id="login-form" class="space-y-4 mt-6">
+        <div id="login-form" class="space-y-4 mt-6 stagger-children active">
           <input type="email" id="email-login" placeholder="Email Address" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
           <input type="password" id="pass-login" placeholder="Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
           <button onclick="handleLogin()" class="glow-button w-full py-4 rounded-2xl font-extrabold text-sm uppercase">Login Dashboard</button>
-          <p class="text-xs text-slate-500 mt-4">No account? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Register</a></p>
+          <p class="text-xs text-slate-500 mt-4 fade-in-quick">No account? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Register</a></p>
         </div>
-        <div id="register-form" class="hidden space-y-4 mt-6">
+        <div id="register-form" class="hidden space-y-4 mt-6 stagger-children">
           <input type="email" id="email-reg" placeholder="New Email" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
           <input type="password" id="pass-reg" placeholder="Create Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
-          <button onclick="handleRegister()" class="w-full bg-indigo-600 py-4 rounded-2xl font-extrabold text-sm text-white uppercase">Sign Up</button>
-          <p class="text-xs text-slate-500 mt-4">Registered? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold">Back to Login</a></p>
+          <button onclick="handleRegister()" class="w-full glow-button py-4 rounded-2xl font-extrabold text-sm text-white uppercase">Sign Up</button>
+          <p class="text-xs text-slate-500 mt-4">Registered? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Back to Login</a></p>
         </div>
       </div>
     </div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-[#020617] lg:bg-[#020617]/50 border-r border-white/5 p-10 flex flex-col z-[60] -translate-x-full lg:translate-x-0 lg:sticky lg:h-screen text-center">
-      <div class="text-3xl font-black mb-16 italic text-white tracking-tighter">RBX<span class="text-blue-500">.</span></div>
-      <nav class="flex-1 space-y-6 text-left">
-        <div onclick="showPage('home')" id="nav-home" class="sidebar-item active p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Home</div>
-        <div onclick="showPage('riwayat')" id="nav-riwayat" class="sidebar-item p-4 text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"><div class="w-2 h-2 rounded-full bg-slate-700"></div> History</div>
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 lg:w-16 lg:h-16 glow-button rounded-full flex items-center justify-center z-[1000] shadow-2xl transition-all active:scale-90">
+      <svg class="w-7 h-7 lg:w-8 lg:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+      </svg>
+    </button>
+
+    <div id="chat-window" class="fixed bottom-24 right-4 lg:right-6 w-[calc(100%-32px)] lg:w-[360px] h-[500px] lg:h-[550px] rounded-[2rem] lg:rounded-[2.5rem] z-[1000] flex flex-col overflow-hidden chat-hidden">
+      <div class="chat-header p-5 lg:p-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-lg border border-blue-400/30">
+            <img src="/foto/cs.png" alt="Clara CS" class="w-full h-full object-cover" />
+          </div>
+          <div>
+            <h4 class="text-[10px] lg:text-xs font-black text-white uppercase italic tracking-tighter">Clara CS</h4>
+            <p class="text-[8px] lg:text-[9px] text-emerald-400 font-bold uppercase tracking-widest">System Online</p>
+          </div>
+        </div>
+        <button onclick="toggleChat()" class="text-slate-400 hover:text-white transition-colors p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" /></svg>
+        </button>
+      </div>
+
+      <div id="chat-messages" class="flex-1 p-5 lg:p-6 overflow-y-auto space-y-4 text-[11px] font-medium scrollbar-hide bg-[#0f172a]">
+        <div class="p-4 rounded-2xl rounded-tl-none message-animate bot-message max-w-[85%]">Halo! Saya asisten pintar **RBX-STORE**. Klik pilihan di bawah untuk bertanya secara instan!</div>
+      </div>
+
+      <div class="chat-footer p-4 flex flex-col gap-3">
+        <div class="scroll-container" id="quick-container">
+          <button type="button" onclick="quickChat('Status pesanan saya')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">📦 Status Pesanan</button>
+          <button type="button" onclick="quickChat('Stok hari ini')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">💎 Stok Hari Ini</button>
+          <button type="button" onclick="quickChat('Kenapa pesanan saya lama')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">⏳ Pesanan Lama</button>
+          <button type="button" onclick="quickChat('Hubungi CS')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">📞 Hubungi CS</button>
+          <button type="button" onclick="quickChat('Cara beli')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">❓ Cara Beli</button>
+          <button type="button" onclick="quickChat('Halo admin')" class="quick-opt chat-quick-opt rounded-2xl text-[10px] font-bold">👋 Say Halo</button>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-input" placeholder="Tanya sesuatu..." class="chat-input-field flex-1 p-3 outline-none text-[11px]" onkeypress="if (event.key === 'Enter') sendChat();" />
+          <button onclick="sendChat()" class="bg-blue-600 p-3 rounded-xl hover:bg-blue-500 transition shadow-lg active:scale-95 flex-shrink-0 border border-blue-400/30">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="3" stroke-linecap="round" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 lg:w-72 bg-[#020617] border-r border-white/5 p-8 lg:p-10 flex flex-col z-[101] -translate-x-full lg:translate-x-0 lg:sticky lg:h-screen text-center">
+      <div class="text-3xl font-black mb-12 lg:mb-16 italic text-white tracking-tighter fade-in-quick">RBX<span class="text-blue-500">.</span></div>
+      <nav class="flex-1 space-y-3 lg:space-y-4 text-left stagger-children active">
+        <div
+          onclick="
+            showPage('home');
+            toggleSidebar();
+          "
+          id="nav-home"
+          class="sidebar-item active p-4 text-[10px] lg:text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"
+        >
+          <div class="w-2 h-2 rounded-full bg-blue-500 indikator"></div>
+          Home
+        </div>
+        <div
+          onclick="
+            showPage('riwayat');
+            toggleSidebar();
+          "
+          id="nav-riwayat"
+          class="sidebar-item p-4 text-[10px] lg:text-xs font-black text-slate-400 flex items-center gap-4 tracking-widest uppercase"
+        >
+          <div class="w-2 h-2 rounded-full bg-slate-700 indikator"></div>
+          History
+        </div>
       </nav>
-      <div class="mt-auto border-t border-white/5 pt-6 text-center">
+      <div class="mt-auto border-t border-white/5 pt-6 text-center fade-in-quick">
         <p id="user-display" class="text-[9px] font-black text-slate-500 mb-3 truncate uppercase tracking-widest"></p>
-        <button onclick="handleLogout()" class="w-full text-[9px] font-black text-red-500 tracking-widest hover:text-red-400 transition uppercase italic mb-4">Logout Access</button>
+        <button onclick="handleLogout()" class="w-full text-[9px] font-black text-red-500 tracking-widest hover:text-red-400 transition-colors uppercase italic mb-4">Logout Access</button>
       </div>
     </aside>
 
-    <main class="flex-1 p-6 lg:p-20 overflow-y-auto">
-      <section id="page-home">
+    <main class="flex-1 p-4 lg:p-20 overflow-y-auto w-full">
+      <section id="page-home" class="stagger-children active">
         <div class="swiper mySwiper shadow-2xl shadow-blue-500/10">
           <div class="swiper-wrapper">
-            <div class="swiper-slide"><div class="slide-content" style="background-image: url('foto/banner1.png'); background-color: #1e293b"><div class="slide-overlay"></div><div class="slide-text p-6"><h2 class="text-4xl font-black italic uppercase text-white">RBX STORE</h2><p class="text-blue-400 font-bold text-xs uppercase tracking-widest">Premium Robux Service</p></div></div></div>
+            <div class="swiper-slide">
+              <div class="slide-content" style="background-image: url(&quot;foto/banner1.png&quot;); background-color: #1e293b">
+                <div class="slide-overlay"></div>
+                <div class="slide-text p-6">
+                  <h2 class="text-2xl lg:text-4xl font-black italic uppercase text-white tracking-tighter">RBX STORE</h2>
+                  <p class="text-blue-400 font-bold text-[10px] lg:text-xs uppercase tracking-widest mt-1">Premium Robux Service</p>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="slide-content" style="background-image: url(&quot;foto/banner2.png&quot;); background-color: #111827">
+                <div class="slide-overlay"></div>
+                <div class="slide-text p-6">
+                  <h2 class="text-2xl lg:text-4xl font-black italic uppercase text-white tracking-tighter">Top Up Instan</h2>
+                  <p class="text-blue-400 font-bold text-[10px] lg:text-xs uppercase tracking-widest mt-1">Garansi Aman & Cepat</p>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="slide-content" style="background-image: url(&quot;foto/banner3.png&quot;); background-color: #0f172a">
+                <div class="slide-overlay"></div>
+                <div class="slide-text p-6">
+                  <h2 class="text-2xl lg:text-4xl font-black italic uppercase text-white tracking-tighter">Gamepass Premium</h2>
+                  <p class="text-blue-400 font-bold text-[10px] lg:text-xs uppercase tracking-widest mt-1">Paket Eksklusif untuk Kamu</p>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="slide-content" style="background-image: url(&quot;foto/banner4.png&quot;); background-color: #111827">
+                <div class="slide-overlay"></div>
+                <div class="slide-text p-6">
+                  <h2 class="text-2xl lg:text-4xl font-black italic uppercase text-white tracking-tighter">Promo Terbaru</h2>
+                  <p class="text-blue-400 font-bold text-[10px] lg:text-xs uppercase tracking-widest mt-1">Bonus Robux Setiap Order</p>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="swiper-pagination"></div>
         </div>
 
         <div class="max-w-5xl mx-auto lg:mx-0">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="glass-card p-8 rounded-[2.5rem] col-span-1 md:col-span-3 flex flex-col items-center justify-center border-blue-500/20 relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-10 opacity-10 text-8xl">💎</div>
-              <div class="text-[10px] font-black text-blue-400 uppercase mb-1 italic tracking-widest">GLOBAL STOCK INVENTORY</div>
-              <div class="text-5xl font-black text-white tracking-tighter" id="stok-display">0Robux</div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 lg:mb-12">
+            <div class="glass-card animate-card-entry p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] col-span-1 md:col-span-3 flex flex-col items-center justify-center border-blue-500/20 relative overflow-hidden">
+              <div class="absolute top-0 right-0 p-6 lg:p-10 opacity-10 text-6xl lg:text-8xl">💎</div>
+              <div class="text-[9px] lg:text-[10px] font-black text-blue-400 uppercase mb-1 italic tracking-widest">GLOBAL STOCK INVENTORY</div>
+              <div class="text-3xl lg:text-5xl font-black text-white tracking-tighter" id="stok-display">0Robux</div>
             </div>
           </div>
 
-          <div id="order-container">
-            <div class="glass-card p-10 rounded-[2.5rem] mb-12 text-left">
-              <h3 class="text-xs font-black text-blue-500 uppercase mb-8 italic">1. Account Information</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" id="roblox_user" placeholder="Username Roblox Mu" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic uppercase text-sm" />
-                <input type="text" id="discord_user" placeholder="Username Discord" class="input-premium w-full p-5 rounded-2xl outline-none font-black italic text-sm" />
+          <div id="order-container" class="space-y-8 lg:space-y-12">
+            <div class="glass-card animate-card-entry p-6 lg:p-10 rounded-[2rem] lg:rounded-[2.5rem] text-left">
+              <h3 class="text-[10px] lg:text-xs font-black text-blue-500 uppercase mb-6 lg:mb-8 italic ml-2">1. Account Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 stagger-children active">
+                <input type="text" id="roblox_user" placeholder="Username Roblox" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none font-black italic uppercase text-xs lg:text-sm" />
+                <input type="text" id="discord_user" placeholder="Username Discord" class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none font-black italic text-xs lg:text-sm" />
               </div>
             </div>
-            <h3 class="text-xs font-black text-blue-500 uppercase mb-8 italic ml-4 text-left">2. Select Product Robux</h3>
-            <div id="robux-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-14 text-center"></div>
-            <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic ml-4 text-left">3. Select Product Gamepass</h3>
-            <div id="gamepass-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10 text-center"></div>
-            <button onclick="checkStockAndOpenQris()" class="glow-button w-full py-6 rounded-[2rem] text-white font-black uppercase text-sm mt-8">Confirm & Buy Now</button>
+
+            <div class="animate-card-entry" style="animation-delay: 0.2s">
+              <h3 class="text-[10px] lg:text-xs font-black text-blue-500 uppercase mb-6 lg:mb-8 italic ml-6 text-left">2. Select Product Robux</h3>
+              <div id="robux-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4 mb-10 lg:mb-14 text-center"></div>
+            </div>
+
+            <div class="animate-card-entry" style="animation-delay: 0.4s">
+              <h3 class="text-[10px] lg:text-xs font-black text-blue-500 uppercase mb-4 lg:mb-6 italic ml-6 text-left">3. Select Product Gamepass</h3>
+              <div id="gamepass-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4 mb-10 text-center"></div>
+            </div>
+
+            <button
+              onclick="checkStockAndOpenQris()"
+              class="glow-button animate-card-entry w-full py-5 lg:py-6 rounded-[1.5rem] lg:rounded-[2rem] text-white font-black uppercase text-xs lg:text-sm mt-4 tracking-widest shine-effect"
+              style="animation-delay: 0.6s"
+            >
+              Confirm & Buy Now
+            </button>
           </div>
 
-          <div id="waiting-area" class="hidden text-center py-20 glass-card rounded-[3rem]">
-            <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
-            <h3 class="text-2xl font-black text-yellow-500 uppercase italic">Queue Active</h3>
-            <p class="text-slate-500 text-[10px] mt-4 font-black uppercase">Admin sedang meninjau pesanan anda...</p>
+          <div id="waiting-area" class="hidden text-center py-12 lg:py-20 glass-card rounded-[2.5rem] lg:rounded-[3rem] animate-card-entry">
+            <div class="w-12 h-12 lg:w-16 lg:h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
+            <h3 class="text-xl lg:text-2xl font-black text-yellow-500 uppercase italic tracking-wider">PESANAN SEDANG BERLANGSUNG</h3>
+            <p class="text-slate-500 text-[9px] lg:text-[10px] mt-4 font-black uppercase tracking-widest">Admin sedang meninjau pesanan anda...</p>
           </div>
         </div>
       </section>
 
-      <section id="page-riwayat" class="hidden">
-        <h1 class="text-5xl font-black mb-12 italic text-white uppercase">History</h1>
+      <section id="page-riwayat" class="hidden stagger-children">
+        <h1 class="text-3xl lg:text-5xl font-black mb-8 lg:mb-12 italic text-white uppercase tracking-tighter">History</h1>
         <div id="riwayat-list" class="grid grid-cols-1 gap-4"></div>
       </section>
     </main>
@@ -210,7 +992,7 @@
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-      import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+      import { getDatabase, ref, set, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyBgDG1pbpT-eB8RR_gPGs1EfZR9Sfczzfc",
@@ -221,21 +1003,260 @@
         messagingSenderId: "356926981274",
         appId: "1:356926981274:web:f7ffb5817dfe5c74a4cb23",
       };
+
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getDatabase(app);
-      const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1473231285924265994/pWp8ggIvgfzoZwFPnudv5z6m354LGUrUcIwVPmLptP3fO7BB74j2fhXN0Jv7zi5eki3R";
-      
+
+      const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1473231285924265994/pWp8ggIvgfzoZwFPnudv5z6m354LGUrUcIwVPmLptP3fO7BB74j2fhXN0Jv7zi5eki3R"; // Replace with your Discord webhook URL
+      const WEBHOOK_ENABLED = Boolean(DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL.trim());
+
       let globalStock = 0;
       let selectedPackage = null;
-      let lastNotifKey = null;
-      let isWebhookProcessing = false; // ANTI-DUPLICATE FLAG
+      let supportRequestPending = false;
+      let pendingSupportText = "";
+      let chatMode = "bot"; // 'bot' or 'admin'
+      let chatSessionId = null;
 
-      new Swiper(".mySwiper", { loop: true, autoplay: { delay: 3000 }, pagination: { el: ".swiper-pagination" }, effect: "fade" });
+      async function sendDiscordWebhook(payload) {
+        if (!WEBHOOK_ENABLED) return;
+        try {
+          await fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } catch (err) {
+          console.warn("Discord webhook failed", err);
+        }
+      }
 
+      function formatStarRating(value) {
+        return value > 0 ? "★".repeat(value) + "☆".repeat(5 - value) : "Belum dinilai";
+      }
+
+      function formatCurrency(value) {
+        if (value === undefined || value === null || value === "") return "-";
+        const digits = String(value).replace(/[^0-9]/g, "");
+        const numeric = Number(digits);
+        return isNaN(numeric) ? String(value) : numeric.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      }
+
+      function createProductLabel(pkg) {
+        if (!pkg) return "-";
+        const amount = pkg.amount || "-";
+        const price = pkg.price ? ` - Rp ${formatCurrency(pkg.price)}` : "";
+        if ((pkg.type || "").toLowerCase() === "robux") {
+          return `${amount}Robux${price}`;
+        }
+        return `${amount}${price}`;
+      }
+
+      function createDiscordInvoiceEmbed(title, fields, footerText) {
+        return {
+          embeds: [
+            {
+              title,
+              color: 3447003,
+              description: "🧾 Berikut detail invoice otomatis dari website.",
+              fields,
+              timestamp: new Date().toISOString(),
+              footer: { text: footerText || "RBX Store | Order Invoice" },
+            },
+          ],
+        };
+      }
+
+      function notifyDiscordOrder(order) {
+        if (!WEBHOOK_ENABLED) return;
+        const fields = [
+          { name: "Product", value: order.produk || "-", inline: true },
+          { name: "Type", value: order.type || "Robux", inline: true },
+          { name: "Robux", value: order.produk || "-", inline: true },
+          { name: "Price", value: order.price ? `Rp ${formatCurrency(order.price)}` : "-", inline: true },
+          { name: "Roblox", value: order.roblox || "-", inline: true },
+          { name: "Discord", value: order.discord || "-", inline: true },
+          { name: "Email", value: sensorEmail(order.email || "-"), inline: true },
+          { name: "Status", value: order.status || "pending", inline: true },
+        ];
+        sendDiscordWebhook(createDiscordInvoiceEmbed("🟦 New Order Received", fields, "Order masuk dari website."));
+      }
+
+      function notifyDiscordRating(ratingData) {
+        if (!WEBHOOK_ENABLED) return;
+        const fields = [
+          { name: "Order ID", value: ratingData.orderId || "-", inline: true },
+          { name: "Product", value: ratingData.produk || "-", inline: true },
+          { name: "Rating", value: formatStarRating(ratingData.rating), inline: true },
+          { name: "Reviewer", value: ratingData.email || "-", inline: true },
+          { name: "Roblox", value: ratingData.roblox || "-", inline: true },
+        ];
+        if (ratingData.review) {
+          fields.push({ name: "Review", value: ratingData.review, inline: false });
+        }
+        sendDiscordWebhook(createDiscordInvoiceEmbed("⭐ Rating Baru Masuk", fields, "Rating order di-update."));
+      }
+
+      // Mobile Sidebar Toggle
+      window.toggleSidebar = () => {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        sidebar.classList.toggle("sidebar-open");
+        overlay.classList.toggle("active");
+      };
+
+      // Swiper Init
+      const heroSwiper = new Swiper(".mySwiper", {
+        loop: true,
+        autoplay: {
+          delay: 2200,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: false,
+        },
+        pagination: { el: ".swiper-pagination", clickable: true },
+        effect: "fade",
+        fadeEffect: { crossFade: true },
+        speed: 1200,
+      });
+      if (heroSwiper && heroSwiper.autoplay) {
+        heroSwiper.autoplay.start();
+      }
+
+      // Drag to scroll PC
+      const slider = document.getElementById("quick-container");
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      if (slider) {
+        slider.addEventListener("mousedown", (e) => {
+          isDown = true;
+          slider.classList.add("active");
+          startX = e.pageX - slider.offsetLeft;
+          scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener("mouseleave", () => {
+          isDown = false;
+        });
+        slider.addEventListener("mouseup", () => {
+          isDown = false;
+        });
+        slider.addEventListener("mousemove", (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - slider.offsetLeft;
+          const walk = (x - startX) * 2;
+          slider.scrollLeft = scrollLeft - walk;
+        });
+      }
+
+      // Popups
       window.closePromo = () => document.getElementById("promo-modal").classList.remove("active-modal");
+      function sensorEmail(email) {
+        if (!email) return "Guest";
+        let parts = email.split("@");
+        return parts[0].substring(0, 3) + "****@" + parts[1];
+      }
 
-      function sensorEmail(email) { if (!email) return "Guest"; let parts = email.split("@"); return parts[0].substring(0, 3) + "****@" + parts[1]; }
+      async function createSupportRequest(message) {
+        const user = auth.currentUser;
+        if (!user) return null;
+        const payload = {
+          uid: user.uid,
+          email: user.email || "",
+          maskedEmail: sensorEmail(user.email || ""),
+          discord: user.email || "",
+          message: message || "Minta hubungi CS langsung",
+          time: new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" }),
+          status: "pending",
+        };
+        try {
+          const result = await push(ref(db, "support_chat"), payload);
+          chatSessionId = result.key;
+
+          await set(ref(db, `chat_sessions/${chatSessionId}`), {
+            meta: {
+              uid: user.uid,
+              email: user.email || "",
+              maskedEmail: sensorEmail(user.email || ""),
+              createdAt: new Date().toISOString(),
+            },
+          });
+
+          if (message) {
+            await push(ref(db, `chat_sessions/${chatSessionId}/messages`), {
+              from: "user",
+              message: message,
+              time: new Date().toISOString(),
+              uid: user.uid,
+            });
+          }
+
+          return result.key;
+        } catch (err) {
+          console.warn("Support request failed", err);
+          return null;
+        }
+      }
+
+      async function sendMessageToAdmin(message) {
+        const user = auth.currentUser;
+        if (!user || !chatSessionId) return;
+        const msgData = {
+          from: "user",
+          message: message,
+          time: new Date().toISOString(),
+          uid: user.uid,
+        };
+        await push(ref(db, `chat_sessions/${chatSessionId}/messages`), msgData);
+      }
+
+      function clearSupportChatSession() {
+        localStorage.removeItem("support_chat_session_id");
+        localStorage.removeItem("support_chat_mode");
+        chatSessionId = null;
+      }
+
+      function listenForSupportStatus() {
+        if (!chatSessionId) return;
+        onValue(ref(db, `support_chat/${chatSessionId}`), (snap) => {
+          if (!snap.exists()) {
+            if (chatMode !== "bot") {
+              chatMode = "bot";
+              clearSupportChatSession();
+              supportRequestPending = false;
+              pendingSupportText = "";
+              popStatus("success", "Chat Selesai", "Session chat telah ditutup. Kembali ke mode bot. Ketik 'hubungi cs' jika ada pertanyaan lagi.");
+            }
+            return;
+          }
+          const data = snap.val();
+          if (data.status === "resolved" && chatMode !== "bot") {
+            chatMode = "bot";
+            clearSupportChatSession();
+            supportRequestPending = false;
+            pendingSupportText = "";
+            popStatus("success", "Chat Selesai", "CS telah menyelesaikan bantuan Anda. Kembali ke mode bot. Ketik 'hubungi cs' jika ada pertanyaan lagi.");
+          }
+        });
+      }
+
+      function listenForAdminMessages() {
+        if (!chatSessionId) return;
+        onValue(ref(db, `chat_sessions/${chatSessionId}/messages`), (snap) => {
+          const container = document.getElementById("chat-messages");
+          snap.forEach((childSnap) => {
+            const msg = childSnap.val();
+            if (msg.from === "admin" && !document.querySelector(`[data-msg-id="${childSnap.key}"]`)) {
+              const msgEl = document.createElement("div");
+              msgEl.className = "p-3 rounded-2xl rounded-tl-none message-animate bot-message max-w-[85%]";
+              msgEl.setAttribute("data-msg-id", childSnap.key);
+              msgEl.innerHTML = formatChatMessage(msg.message);
+              container.appendChild(msgEl);
+              container.scrollTop = container.scrollHeight;
+            }
+          });
+        });
+      }
 
       window.popStatus = (type, title, msg) => {
         const modal = document.getElementById("status-modal");
@@ -243,193 +1264,294 @@
         document.getElementById("status-msg").innerText = msg;
         const icon = document.getElementById("status-icon");
         icon.innerHTML = type === "error" ? "❌" : "✅";
-        icon.className = `w-20 h-20 ${type === "error" ? "bg-red-500/20" : "bg-emerald-500/20"} text-4xl flex items-center justify-center rounded-full mx-auto mb-6`;
+        icon.className = `w-16 h-16 lg:w-20 lg:h-20 ${type === "error" ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"} text-4xl flex items-center justify-center rounded-full mx-auto mb-6 border ${type === "error" ? "border-red-500/20" : "border-emerald-500/20"}`;
         modal.classList.add("active-modal");
       };
 
-      window.confirmPopup = async () => {
-        const uid = auth.currentUser.uid;
-        if (lastNotifKey) { await remove(ref(db, `notif_popup/${uid}/${lastNotifKey}`)); lastNotifKey = null; }
-        document.getElementById("status-modal").classList.remove("active-modal");
+      window.confirmPopup = () => document.getElementById("status-modal").classList.remove("active-modal");
+
+      window.openRatingModal = (orderId) => {
+        const user = auth.currentUser;
+        if (!user) return popStatus("error", "LOGIN REQUIRED", "Silakan login dulu.");
+        onValue(
+          ref(db, `riwayat/${user.uid}/${orderId}`),
+          (snap) => {
+            if (!snap.exists()) return popStatus("error", "NOT FOUND", "Order tidak ditemukan.");
+            const data = snap.val();
+            document.getElementById("rate-order-id").value = orderId;
+            document.getElementById("rate-produk-name").value = data.produk || "";
+            document.getElementById("rate-comment").value = data.review || "";
+            const rating = data.rating ? String(data.rating) : "";
+            document.querySelectorAll('#rating-modal input[name="rating"]').forEach((input) => {
+              input.checked = input.value === rating;
+            });
+            updateStarVisual(rating ? Number(rating) : 0);
+            document.getElementById("rating-modal").classList.add("active-modal");
+          },
+          { onlyOnce: true },
+        );
       };
 
-      // DETAIL HISTORY LOGIC
-      window.openHistoryDetail = (data) => {
-          const modal = document.getElementById("history-detail-modal");
-          const content = document.getElementById("history-detail-content");
-          const isSuccess = data.status === "success";
+      window.submitRating = async () => {
+        const user = auth.currentUser;
+        if (!user) return popStatus("error", "LOGIN REQUIRED", "Silakan login dulu.");
+        const orderId = document.getElementById("rate-order-id").value;
+        const review = document.getElementById("rate-comment").value.trim();
+        const ratingInput = document.querySelector('#rating-modal input[name="rating"]:checked');
+        if (!orderId || !ratingInput) return popStatus("error", "FAILED", "Pilih rating terlebih dahulu.");
+        const rating = Number(ratingInput.value);
+        const reviewData = {
+          orderId,
+          produk: document.getElementById("rate-produk-name").value || "-",
+          email: user.email,
+          roblox: document.getElementById("roblox_user").value || "-",
+          rating,
+          review,
+        };
+        try {
+          await update(ref(db, `riwayat/${user.uid}/${orderId}`), {
+            rating,
+            review,
+            ratedAt: new Date().toLocaleString(),
+          });
+          notifyDiscordRating(reviewData);
+          document.getElementById("rating-modal").classList.remove("active-modal");
+          popStatus("success", "TERKIRIM", "Terima kasih atas ratingmu!");
+        } catch (e) {
+          popStatus("error", "SYSTEM ERROR", e.message);
+        }
+      };
 
-          content.innerHTML = `
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white/5 p-4 rounded-2xl">
-                    <div class="text-[9px] font-black text-blue-500 uppercase italic mb-1">Order Status</div>
-                    <div class="text-sm font-black ${isSuccess ? 'text-emerald-500' : 'text-red-500'} italic uppercase">${data.status}</div>
-                </div>
-                <div class="bg-white/5 p-4 rounded-2xl">
-                    <div class="text-[9px] font-black text-blue-500 uppercase italic mb-1">Time Issued</div>
-                    <div class="text-[11px] font-black text-white italic uppercase">${data.time}</div>
+      function updateStarVisual(value) {
+        document.querySelectorAll("#rating-modal .star-cb-group label").forEach((label) => {
+          const starValue = Number(label.getAttribute("for").replace("rating-", ""));
+          label.classList.toggle("star-active", value && starValue <= value);
+        });
+      }
+
+      document.querySelectorAll('#rating-modal input[name="rating"]').forEach((input) => {
+        input.addEventListener("change", () => updateStarVisual(Number(input.value)));
+      });
+
+      window.openHistoryDetail = (data) => {
+        const modal = document.getElementById("history-detail-modal");
+        const content = document.getElementById("history-detail-content");
+        const isSuccess = data.status === "success";
+        const ratingValue = data.rating ? Math.min(5, Math.max(1, Number(data.rating))) : 0;
+        const ratingStars = ratingValue ? "★".repeat(ratingValue) + "☆".repeat(5 - ratingValue) : "Belum dinilai";
+        const reviewText = data.review ? `<p class="history-review mt-3">${data.review}</p>` : "";
+        content.innerHTML = `
+            <div class="grid grid-cols-2 gap-4 stagger-children active">
+                <div class="bg-white/5 p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-white/5"><div class="text-[8px] lg:text-[9px] font-black text-blue-500 uppercase italic mb-1 tracking-wider">Status</div><div class="text-[10px] lg:text-sm font-black ${isSuccess ? "text-emerald-500" : "text-red-500"} italic uppercase tracking-tight">${data.status}</div></div>
+                <div class="bg-white/5 p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-white/5"><div class="text-[8px] lg:text-[9px] font-black text-blue-500 uppercase italic mb-1 tracking-wider">Time Issued</div><div class="text-[9px] lg:text-[11px] font-black text-white italic uppercase tracking-tight">${data.time}</div></div>
+            </div>
+            <div class="bg-white/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/5 animate-card-entry" style="animation-delay: 0.2s">
+                <div class="text-[8px] lg:text-[9px] font-black text-slate-500 uppercase italic mb-4 tracking-widest">Account Info</div>
+                <div class="space-y-2 lg:space-y-3">
+                    <div class="flex justify-between items-center"><span class="text-[9px] font-bold text-slate-400">ROBLOX</span><span class="text-xs lg:text-sm font-black text-white uppercase italic tracking-tight">${data.roblox}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[9px] font-bold text-slate-400">DISCORD</span><span class="text-xs lg:text-sm font-black text-white italic tracking-tight">${data.discord || "-"}</span></div>
                 </div>
             </div>
-            <div class="bg-white/5 p-6 rounded-[2rem] border border-white/5">
-                <div class="text-[9px] font-black text-slate-500 uppercase italic mb-4">Account Information</div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400">ROBLOX USER</span><span class="text-sm font-black text-white uppercase italic">${data.roblox}</span></div>
-                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400">DISCORD</span><span class="text-sm font-black text-white italic">${data.discord || '-'}</span></div>
-                </div>
+            <div class="bg-blue-600/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-blue-600/10 animate-card-entry" style="animation-delay: 0.3s">
+                <div class="text-[8px] lg:text-[9px] font-black text-blue-500 uppercase italic mb-2 tracking-widest">Package</div>
+                <div class="text-lg lg:text-xl font-black text-white uppercase italic tracking-tighter">${data.produk} ${data.price ? `- Rp ${formatCurrency(data.price)}` : ""}</div>
             </div>
-            <div class="bg-blue-600/5 p-6 rounded-[2rem] border border-blue-600/10">
-                <div class="text-[9px] font-black text-blue-500 uppercase italic mb-2">Package Selected</div>
-                <div class="text-xl font-black text-white uppercase italic tracking-tighter">${data.produk}</div>
-                ${!isSuccess ? `<div class="mt-4 pt-4 border-t border-blue-600/10"><div class="text-[9px] font-black text-red-400 uppercase italic mb-1">Admin Remark</div><div class="text-xs text-slate-300 italic">${data.reason || 'Data tidak valid'}</div></div>` : ''}
+            <div class="bg-white/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/5 animate-card-entry" style="animation-delay: 0.4s">
+                <div class="text-[8px] lg:text-[9px] font-black text-slate-500 uppercase italic mb-2 tracking-widest">Rating</div>
+                <div class="flex items-center gap-2">
+                  <span class="history-stars">${ratingStars}</span>
+                  <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest">${ratingValue ? `${ratingValue}/5` : "Belum dinilai"}</span>
+                </div>
+                ${reviewText}
             </div>
           `;
-          modal.classList.add("active-modal");
-          document.body.style.overflow = "hidden";
+        modal.classList.add("active-modal");
       };
 
-      window.closeHistoryDetail = () => {
-          document.getElementById("history-detail-modal").classList.remove("active-modal");
-          document.body.style.overflow = "auto";
-      };
+      window.closeHistoryDetail = () => document.getElementById("history-detail-modal").classList.remove("active-modal");
 
+      // Auth & DB Monitoring
       onAuthStateChanged(auth, (user) => {
         document.getElementById("auth-modal").className = user ? "modal-bg" : "modal-bg active-modal";
         if (user) {
           document.getElementById("user-display").innerText = sensorEmail(user.email);
           monitorOrder(user.uid);
-          monitorPopup(user.uid);
           loadRiwayat(user.uid);
         }
       });
 
-      function monitorPopup(uid) {
-        onValue(ref(db, `notif_popup/${uid}`), (snap) => {
-          if (snap.exists()) { snap.forEach((c) => { const d = c.val(); lastNotifKey = c.key; popStatus(d.type, d.title, d.msg); }); }
+      onValue(ref(db, "stok_robux"), (snap) => {
+        globalStock = snap.val() || 0;
+        loadProducts();
+        animateRobuxTotal(globalStock);
+      });
+
+      let robuxTypingTimeout = null;
+      let robuxTypingInterval = null;
+      let robuxLoopTimeout = null;
+      let robuxCurrentValue = 0;
+
+      function animateRobuxTotal(value) {
+        robuxCurrentValue = value;
+        if (robuxLoopTimeout) {
+          clearTimeout(robuxLoopTimeout);
+          robuxLoopTimeout = null;
+        }
+        if (robuxTypingInterval) {
+          clearInterval(robuxTypingInterval);
+          robuxTypingInterval = null;
+        }
+        const display = document.getElementById("stok-display");
+        if (!display) return;
+        display.style.opacity = "0";
+        display.classList.remove("typing-text");
+        display.innerText = "";
+        startRobuxTypingCycle();
+      }
+
+      function startRobuxTypingCycle() {
+        const display = document.getElementById("stok-display");
+        if (!display) return;
+        const text = `${robuxCurrentValue.toLocaleString("id-ID")}Robux`;
+        const typeSpeed = 110;
+        const deleteSpeed = 70;
+        const holdTime = 2400;
+        const delayBeforeStart = 1000;
+
+        robuxLoopTimeout = setTimeout(() => {
+          display.style.opacity = "1";
+          display.classList.add("typing-text");
+          display.innerText = "";
+          let index = 0;
+          robuxTypingInterval = setInterval(() => {
+            if (index >= text.length) {
+              clearInterval(robuxTypingInterval);
+              robuxTypingInterval = null;
+              robuxLoopTimeout = setTimeout(() => {
+                display.classList.add("typing-text");
+                robuxTypingInterval = setInterval(() => {
+                  if (display.innerText.length <= 0) {
+                    clearInterval(robuxTypingInterval);
+                    robuxTypingInterval = null;
+                    display.classList.remove("typing-text");
+                    robuxLoopTimeout = setTimeout(() => {
+                      startRobuxTypingCycle();
+                    }, 800);
+                    return;
+                  }
+                  display.innerText = display.innerText.slice(0, -1);
+                }, deleteSpeed);
+              }, holdTime);
+              return;
+            }
+            display.innerText += text[index++];
+          }, typeSpeed);
+        }, delayBeforeStart);
+      }
+
+      // Dynamic Dynamic Animation Delay Helper
+      function applyStagger(containerId, selector, baseDelay = 0, step = 0.05) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const items = container.querySelectorAll(selector);
+        items.forEach((item, index) => {
+          item.classList.add("animate-card-entry");
+          item.style.animationDelay = `${baseDelay + index * step}s`;
+          item.style.opacity = "0";
         });
       }
 
-      onValue(ref(db, "stok_robux"), (snap) => {
-        globalStock = snap.val() || 0;
-        document.getElementById("stok-display").innerText = globalStock.toLocaleString("id-ID") + "Robux";
-        loadProducts();
-      });
-
       function loadProducts() {
-        onValue(ref(db, "produk"), (snap) => {
-          const rGrid = document.getElementById("robux-grid");
-          const gGrid = document.getElementById("gamepass-grid");
-          rGrid.innerHTML = ""; gGrid.innerHTML = "";
-          let all = []; snap.forEach((c) => { all.push({ key: c.key, ...c.val() }); });
-          all.forEach((d) => {
-            const t = d.type || "Robux";
-            const buyAmt = parseInt(d.amount.replace(/\D/g, "")) || 0;
-            const isOutOfStock = t === "Robux" && buyAmt > globalStock;
-            const card = document.createElement("div");
-            card.className = `package-card ${isOutOfStock ? "disabled" : ""}`;
-            card.innerHTML = `<div class="text-2xl mb-2">${t === "Robux" ? "💎" : "🎁"}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1">${t}</div><div class="text-[11px] font-black text-white italic mb-1 uppercase">${d.amount} ${t === "Robux" ? "Robux" : ""}</div><div class="text-[9px] font-bold text-slate-500">Rp ${d.price}</div>`;
-            if (!isOutOfStock) card.onclick = () => { document.querySelectorAll(".package-card").forEach((x) => x.classList.remove("selected")); card.classList.add("selected"); selectedPackage = d; };
-            if (t === "Robux") rGrid.appendChild(card); else gGrid.appendChild(card);
-          });
-        }, { onlyOnce: true });
+        onValue(
+          ref(db, "produk"),
+          (snap) => {
+            const rGrid = document.getElementById("robux-grid");
+            const gGrid = document.getElementById("gamepass-grid");
+            rGrid.innerHTML = "";
+            gGrid.innerHTML = "";
+            let all = [];
+            snap.forEach((c) => {
+              all.push({ key: c.key, ...c.val() });
+            });
+
+            all.sort((a, b) => {
+              const aAmt = parseInt((a.amount || "").replace(/\D/g, "")) || 0;
+              const bAmt = parseInt((b.amount || "").replace(/\D/g, "")) || 0;
+              return aAmt - bAmt;
+            });
+
+            all.forEach((d) => {
+              const t = d.type || "Robux";
+              const buyAmt = parseInt(d.amount.replace(/\D/g, "")) || 0;
+              const isOutOfStock = t === "Robux" && buyAmt > globalStock;
+              const card = document.createElement("div");
+              card.className = `package-card ${isOutOfStock ? "disabled" : ""}`;
+              card.style.opacity = "0";
+
+              card.innerHTML = `<div class="text-xl lg:text-2xl mb-1 lg:mb-2">${t === "Robux" ? "💎" : "🎁"}</div><div class="text-[8px] font-black text-blue-400 uppercase mb-1 tracking-wider">${t}</div><div class="text-[10px] lg:text-[11px] font-black text-white italic mb-1 uppercase tracking-tight">${d.amount}</div><div class="text-[8px] lg:text-[9px] font-bold text-slate-500 tracking-tight">Rp ${d.price}</div>`;
+
+              if (!isOutOfStock)
+                card.onclick = () => {
+                  document.querySelectorAll(".package-card").forEach((x) => x.classList.remove("selected"));
+                  card.classList.add("selected");
+                  selectedPackage = d;
+                };
+              if (t === "Robux") rGrid.appendChild(card);
+              else gGrid.appendChild(card);
+            });
+            applyStagger("robux-grid", ".package-card", 0.3);
+            applyStagger("gamepass-grid", ".package-card", 0.5);
+          },
+          { onlyOnce: true },
+        );
       }
 
       window.checkStockAndOpenQris = () => {
+        if (!auth.currentUser) return popStatus("error", "LOGIN REQUIRED", "Silakan login dulu.");
         const r = document.getElementById("roblox_user").value;
         const d = document.getElementById("discord_user").value;
         if (!r || !d || !selectedPackage) return popStatus("error", "INCOMPLETE", "Isi data & pilih paket.");
         document.getElementById("qris-modal").classList.add("active-modal");
       };
 
-      // DISCORD NEW ORDER WEBHOOK (ANTI-DUPLICATE)
       window.confirmQris = async () => {
-        if (isWebhookProcessing) return; // LOCK
-
         const r = document.getElementById("roblox_user").value;
         const d = document.getElementById("discord_user").value;
         const u = auth.currentUser;
-        const censored = sensorEmail(u.email);
-
-        isWebhookProcessing = true; // START LOCK
-
+        const orderData = {
+          uid: u.uid,
+          email: u.email,
+          roblox: r,
+          discord: d,
+          produk: createProductLabel(selectedPackage),
+          type: selectedPackage.type || "Robux",
+          price: selectedPackage.price || "-",
+          amount: selectedPackage.amount,
+          time: new Date().toLocaleString(),
+          status: "pending",
+        };
         try {
-          await set(ref(db, `orders_active/${u.uid}`), { uid: u.uid, email: u.email, roblox: r, discord: d, produk: selectedPackage.display, type: selectedPackage.type || "Robux", time: new Date().toLocaleString(), status: "pending" });
-          
-          const embed = {
-            title: "📑 INVOICE - NEW ORDER",
-            color: 3447003,
-            fields: [
-              { name: "👤 PELANGGAN", value: `\`${censored}\`` },
-              { name: "🎮 ROBLOX", value: `**${r}**`, inline: true },
-              { name: "💬 DISCORD", value: `**${d}**`, inline: true },
-              { name: "📦 PRODUK", value: `\`${selectedPackage.display}\`` },
-              { name: "💰 STATUS", value: "**PENDING**" },
-            ],
-            timestamp: new Date(),
-          };
-
-          await fetch(DISCORD_WEBHOOK_URL, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" }, 
-            body: JSON.stringify({ embeds: [embed] }) 
-          });
-
+          await set(ref(db, `orders_active/${u.uid}`), orderData);
+          notifyDiscordOrder(orderData);
           document.getElementById("qris-modal").classList.remove("active-modal");
           window.open("https://discord.com/users/689328089104515161", "_blank");
-        } catch (e) { 
-          popStatus("error", "SYSTEM ERROR", e.message); 
-        } finally {
-          isWebhookProcessing = false; // RELEASE LOCK
-        }
-      };
-
-      // DISCORD RATING WEBHOOK (ANTI-DUPLICATE)
-      window.submitRating = async () => {
-        if (isWebhookProcessing) return; // LOCK
-
-        const oKey = document.getElementById("rate-order-id").value;
-        const stars = document.querySelector('input[name="rating"]:checked')?.value;
-        const comm = document.getElementById("rate-comment").value || "No comment";
-        const user = auth.currentUser;
-        const censored = sensorEmail(user.email);
-
-        if (!stars) return popStatus("error", "RATING EMPTY", "Pilih bintang.");
-
-        isWebhookProcessing = true; // START LOCK
-
-        try {
-          await update(ref(db, `riwayat/${user.uid}/${oKey}`), { rating: stars, testimoni: comm });
-          
-          await fetch(DISCORD_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              embeds: [
-                {
-                  title: "⭐ FEEDBACK - RBX STORE",
-                  color: 16111360,
-                  fields: [
-                    { name: "👤 PEMBELI", value: `\`${censored}\``, inline: true },
-                    { name: "✨ RATING", value: "⭐".repeat(stars), inline: true },
-                    { name: "💬 KOMENTAR", value: `\`\`\`${comm}\`\`\`` },
-                  ],
-                  timestamp: new Date()
-                },
-              ],
-            }),
-          });
-          document.getElementById("rating-modal").classList.remove("active-modal");
-          popStatus("success", "THANKS", "Penilaian tersimpan.");
-        } catch (e) { 
-          popStatus("error", "FAILED", e.message); 
-        } finally {
-          isWebhookProcessing = false; // RELEASE LOCK
+        } catch (e) {
+          popStatus("error", "SYSTEM ERROR", e.message);
         }
       };
 
       function monitorOrder(uid) {
         onValue(ref(db, `orders_active/${uid}`), (snap) => {
-          document.getElementById("order-container").className = snap.exists() ? "hidden" : "";
-          document.getElementById("waiting-area").className = snap.exists() ? "" : "hidden";
+          const orderCont = document.getElementById("order-container");
+          const waitArea = document.getElementById("waiting-area");
+          if (snap.exists()) {
+            orderCont.classList.add("hidden");
+            waitArea.classList.remove("hidden");
+            waitArea.classList.add("animate-card-entry");
+          } else {
+            orderCont.classList.remove("hidden");
+            waitArea.classList.add("hidden");
+          }
         });
       }
 
@@ -437,44 +1559,189 @@
         onValue(ref(db, `riwayat/${uid}`), (snap) => {
           const list = document.getElementById("riwayat-list");
           list.innerHTML = "";
-          if (!snap.exists()) { list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30">Belum ada riwayat</p>`; return; }
-          let raw = []; snap.forEach((c) => { raw.push({ key: c.key, ...c.val() }); });
+          if (!snap.exists()) {
+            list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30 animate-card-entry tracking-widest">Belum ada riwayat</p>`;
+            return;
+          }
+          let raw = [];
+          snap.forEach((c) => {
+            raw.push({ key: c.key, ...c.val() });
+          });
           raw.reverse().forEach((d) => {
             const isF = d.status === "failed";
+            const ratingValue = d.rating ? Math.min(5, Math.max(1, Number(d.rating))) : 0;
+            const ratingStars = ratingValue ? "★".repeat(ratingValue) + "☆".repeat(5 - ratingValue) : "Belum dinilai";
+            const ratingClass = ratingValue ? "history-stars" : "text-slate-400 uppercase tracking-widest text-[8px]";
+            const buttonLabel = ratingValue ? "Update Rating" : "Beri Rating";
             const card = document.createElement("div");
-            card.className = `glass-card flex flex-col md:flex-row items-center justify-between p-6 lg:p-8 rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 relative text-left cursor-pointer hover:bg-white/[0.05] transition`;
-            
-            card.onclick = (e) => { if(e.target.tagName !== 'BUTTON') openHistoryDetail(d); };
-
-            const rateBtn = (!isF && !d.rating) ? `<button onclick="openRating('${d.key}', '${d.produk}')" class="bg-blue-500 text-white text-[8px] font-black px-4 py-1.5 rounded-full uppercase italic transition hover:scale-105">RATE ORDER</button>` : (d.rating ? "⭐".repeat(d.rating) : "");
-
-            card.innerHTML = `
-                <div class="flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-bold">${isF ? "!" : "✓"}</div>
-                    <div><h4 class="text-lg font-black text-white uppercase italic tracking-tighter">${d.produk}</h4><div class="text-[9px] text-slate-500 font-bold mt-1 uppercase">${d.roblox} • ${d.time}</div></div>
-                </div>
-                <div class="mt-4 md:mt-0 flex flex-col items-end gap-2">
-                    <div class="text-[10px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase">Status: ${isF ? "Rejected" : "Success"}</div>
-                    ${rateBtn}
-                </div>`;
+            card.style.opacity = "0";
+            card.className = `glass-card history-card flex flex-col md:flex-row items-center justify-between p-5 lg:p-7 rounded-[1.5rem] lg:rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 text-left transition-all hover:border-blue-400 hover:bg-white/5`;
+            card.onclick = () => openHistoryDetail(d);
+            const priceLabel = d.price ? ` - Rp ${formatCurrency(d.price)}` : "";
+            card.innerHTML = `<div class="flex items-start gap-4 lg:gap-6 w-full"><div class="w-11 h-11 lg:w-12 lg:h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-black flex-shrink-0 border border-current/10">${isF ? "!" : "✓"}</div><div class="flex-1"><h4 class="text-sm lg:text-base font-black text-white uppercase italic tracking-tight">${d.produk}${priceLabel}</h4><div class="text-[8px] lg:text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-wider">${d.roblox} • ${d.time}</div><div class="mt-3 flex flex-wrap items-center gap-2"><span class="history-rating-label">Rating</span><span class="${ratingClass}">${ratingStars}</span></div>${d.review ? `<p class="history-review mt-3">${d.review}</p>` : ""}</div><div class="flex flex-col items-end gap-3"><div class="text-[9px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase tracking-widest border border-current/20 px-3 py-1 rounded-full bg-current/5">Status: ${isF ? "Rejected" : "Success"}</div><button type="button" onclick="event.stopPropagation(); openRatingModal('${d.key}')" class="rate-order-btn">${buttonLabel}</button></div></div>`;
             list.appendChild(card);
           });
+          if (!document.getElementById("page-riwayat").classList.contains("hidden")) {
+            applyStagger("riwayat-list", ".glass-card", 0.1, 0.08);
+          }
         });
       }
 
-      window.toggleSidebar = () => document.getElementById("sidebar").classList.toggle("-translate-x-full");
-      window.showPage = (p) => {
-        document.querySelectorAll("main > section").forEach((s) => s.classList.add("hidden"));
-        document.getElementById(`page-${p}`).classList.remove("hidden");
-        document.querySelectorAll(".sidebar-item").forEach((i) => i.classList.remove("active"));
-        document.getElementById(`nav-${p}`).classList.add("active");
-        if (window.innerWidth < 1024) toggleSidebar();
+      // Chat Logic Revisi Total (Solid Style)
+      window.toggleChat = () => {
+        const chat = document.getElementById("chat-window");
+        chat.classList.toggle("chat-hidden");
+        chat.classList.toggle("chat-visible");
+        if (chat.classList.contains("chat-visible")) {
+          setTimeout(() => document.getElementById("chat-input").focus(), 500);
+        }
       };
-      window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById("email-login").value, document.getElementById("pass-login").value).catch(() => popStatus("error", "LOGIN FAILED", "Email/Password salah"));
-      window.handleRegister = () => createUserWithEmailAndPassword(auth, document.getElementById("email-reg").value, document.getElementById("pass-reg").value).catch((e) => popStatus("error", "REGISTRATION FAILED", e.message));
-      window.handleLogout = () => signOut(auth);
-      window.toggleAuth = () => { document.getElementById("login-form").classList.toggle("hidden"); document.getElementById("register-form").classList.toggle("hidden"); };
-      window.openRating = (oKey, pName) => { document.getElementById("rate-order-id").value = oKey; document.getElementById("rate-produk-name").value = pName; document.getElementById("rating-modal").classList.add("active-modal"); };
+
+      function escapeHtml(text) {
+        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+      }
+
+      function formatChatMessage(text) {
+        return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      }
+
+      window.quickChat = (msg) => {
+        document.getElementById("chat-input").value = msg;
+        window.sendChat();
+      };
+
+      window.sendChat = () => {
+        const input = document.getElementById("chat-input");
+        const container = document.getElementById("chat-messages");
+        const userMsg = input.value.trim();
+        if (!userMsg) return;
+
+        // Bubble USER (Solid Gradient Biru)
+        container.innerHTML += `<div class="p-3 rounded-2xl rounded-tr-none text-white max-w-[85%] ml-auto italic message-animate user-message">${formatChatMessage(userMsg)}</div>`;
+        input.value = "";
+        container.scrollTop = container.scrollHeight;
+
+        if (chatMode === "admin") {
+          // Send to admin
+          sendMessageToAdmin(userMsg);
+          return;
+        }
+
+        // Bot mode
+        const botId = "bot-" + Date.now();
+        // typing indicator (Solid Gelap)
+        container.innerHTML += `<div id="${botId}" class="p-3 rounded-2xl rounded-tl-none message-animate bot-message max-w-[85%] animate-pulse typing-indicator bot-message">...</div>`;
+        container.scrollTop = container.scrollHeight;
+
+        setTimeout(() => {
+          const botEl = document.getElementById(botId);
+          if (!botEl) return;
+          botEl.classList.remove("animate-pulse", "typing-indicator");
+
+          let text = userMsg.toLowerCase();
+          let reply = "Silakan tanya soal stok atau status pesanan.";
+          if (text.includes("status") && auth.currentUser) {
+            onValue(
+              ref(db, `orders_active/${auth.currentUser.uid}`),
+              (snap) => {
+                botEl.innerHTML = snap.exists() ? formatChatMessage(`Pesanan **${snap.val().produk}** sedang dalam antrean **PENDING**.`) : "Tidak ada pesanan aktif saat ini.";
+                container.scrollTop = container.scrollHeight;
+              },
+              { onlyOnce: true },
+            );
+            return;
+          }
+          if (text.includes("stok")) reply = `Stok robux: **${globalStock.toLocaleString()}**. Buruan order!`;
+          if (text.includes("kenapa pesanan saya lama") || text.includes("pesanan saya lama") || text.includes("kenapa lama")) {
+            reply = "Karena kemungkinan besar pesanan Anda dalam antrian, tunggu admin online agar pesanan Anda diproses dengan baik.";
+          }
+          const affirmativeReply = /\b(ya|iya|oke|ok|yes|yep|sip|boleh|lanjut)\b/;
+          const negativeReply = /\b(tidak|ga|gak|engga|nggak|no)\b/;
+          const supportRequestPhrase =
+            text.includes("tidak bisa") ||
+            text.includes("gak bisa") ||
+            text.includes("ga bisa") ||
+            text.includes("butuh cs") ||
+            text.includes("hubungi cs") ||
+            text.includes("hubungi admin") ||
+            text.includes("cs kami") ||
+            text.includes("minta cs");
+
+          const handleSupportFlow = async () => {
+            if (supportRequestPending) {
+              if (affirmativeReply.test(text)) {
+                const sessionId = await createSupportRequest(pendingSupportText || userMsg);
+                if (sessionId) {
+                  chatMode = "admin";
+                  listenForAdminMessages();
+                  listenForSupportStatus();
+                  reply = "Baik, Anda sekarang terhubung dengan CS. Admin akan membantu Anda.";
+                } else {
+                  reply = "Maaf, gagal menghubungi CS. Coba lagi nanti.";
+                }
+              } else if (negativeReply.test(text)) {
+                reply = "Oke, tidak apa-apa. Kalau butuh CS, ketik lagi kapan saja.";
+              } else {
+                reply = "Ketik 'iya' jika mau saya hubungi CS, atau 'tidak' untuk batal.";
+                botEl.innerHTML = formatChatMessage(reply);
+                container.scrollTop = container.scrollHeight;
+                return;
+              }
+              supportRequestPending = false;
+              pendingSupportText = "";
+              botEl.innerHTML = formatChatMessage(reply);
+              container.scrollTop = container.scrollHeight;
+              return;
+            }
+
+            if (supportRequestPhrase) {
+              supportRequestPending = true;
+              pendingSupportText = userMsg;
+              reply = "Apakah mau saya hubungi ke CS kami langsung?";
+              botEl.innerHTML = formatChatMessage(reply);
+              container.scrollTop = container.scrollHeight;
+              return;
+            }
+
+            if (text.includes("status") && auth.currentUser) {
+              onValue(
+                ref(db, `orders_active/${auth.currentUser.uid}`),
+                (snap) => {
+                  botEl.innerHTML = snap.exists() ? formatChatMessage(`Pesanan **${snap.val().produk}** sedang dalam antrean **PENDING**.`) : "Tidak ada pesanan aktif saat ini.";
+                  container.scrollTop = container.scrollHeight;
+                },
+                { onlyOnce: true },
+              );
+              return;
+            }
+            if (text.includes("stok")) reply = `Stok robux: **${globalStock.toLocaleString()}**. Buruan order!`;
+            if (text.includes("kenapa pesanan saya lama") || text.includes("pesanan saya lama") || text.includes("kenapa lama")) {
+              reply = "Karena kemungkinan besar pesanan Anda dalam antrian, tunggu admin online agar pesanan Anda diproses dengan baik.";
+            }
+            if (text.includes("cara")) reply = "Isi username, pilih paket, scan QRIS, lalu konfirmasi ke admin.";
+
+            botEl.innerHTML = formatChatMessage(reply);
+            container.scrollTop = container.scrollHeight;
+          };
+
+          handleSupportFlow();
+        }, 1200);
+      };
+      const targetPage = document.getElementById(`page-${p}`);
+      targetPage.classList.remove("hidden");
+      setTimeout(() => {
+        targetPage.classList.add("stagger-children", "active");
+        if (p === "riwayat") {
+          applyStagger("riwayat-list", ".glass-card", 0.1, 0.08);
+        }
+      }, 50);
+      document.querySelectorAll(".sidebar-item").forEach((i) => i.classList.remove("active"));
+      document.getElementById(`nav-${p}`).classList.add("active");
+
+      window.toggleAuth = () => {
+        document.getElementById("login-form").classList.toggle("hidden");
+        document.getElementById("register-form").classList.toggle("hidden");
+      };
     </script>
   </body>
 </html>
