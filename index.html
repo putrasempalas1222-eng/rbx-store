@@ -1085,7 +1085,6 @@
       function notifyDiscordRating(ratingData) {
         if (!WEBHOOK_ENABLED) return;
         const fields = [
-          { name: "Order ID", value: ratingData.orderId || "-", inline: true },
           { name: "Product", value: ratingData.produk || "-", inline: true },
           { name: "Rating", value: formatStarRating(ratingData.rating), inline: true },
           { name: "Reviewer", value: ratingData.email || "-", inline: true },
@@ -1103,6 +1102,47 @@
         const overlay = document.getElementById("sidebar-overlay");
         sidebar.classList.toggle("sidebar-open");
         overlay.classList.toggle("active");
+      };
+
+      window.showPage = (p) => {
+        document.querySelectorAll("main > section").forEach((s) => s.classList.add("hidden"));
+        document.querySelectorAll(".sidebar-item").forEach((i) => {
+          i.classList.remove("active");
+          const indicator = i.querySelector(".indikator");
+          if (indicator) indicator.classList.replace("bg-blue-500", "bg-slate-700");
+        });
+        const targetPage = document.getElementById(`page-${p}`);
+        targetPage.classList.remove("hidden");
+        setTimeout(() => {
+          targetPage.classList.add("stagger-children", "active");
+          if (p === "riwayat") {
+            // Reload history on show (for auth changes)
+            if (auth.currentUser) {
+              loadRiwayat(auth.currentUser.uid);
+            } else {
+              loadRiwayat(null); // Triggers empty state
+            }
+            applyStagger("riwayat-list", ".glass-card", 0.1, 0.08);
+          }
+        }, 50);
+        const activeNav = document.getElementById(`nav-${p}`);
+        activeNav.classList.add("active");
+        const activeIndicator = activeNav.querySelector(".indikator");
+        if (activeIndicator) activeIndicator.classList.replace("bg-slate-700", "bg-blue-500");
+        if (window.innerWidth < 1024) toggleSidebar();
+      };
+
+      window.handleLogout = () => {
+        signOut(auth)
+          .then(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("Logout error:", error);
+            location.reload();
+          });
       };
 
       // Swiper Init
@@ -1218,6 +1258,7 @@
 
       function listenForSupportStatus() {
         if (!chatSessionId) return;
+        let isFirstCheck = true;
         onValue(ref(db, `support_chat/${chatSessionId}`), (snap) => {
           if (!snap.exists()) {
             if (chatMode !== "bot") {
@@ -1230,6 +1271,11 @@
             return;
           }
           const data = snap.val();
+          if (data.status === "accepted" && chatMode === "pending" && !isFirstCheck) {
+            chatMode = "admin";
+            localStorage.setItem("support_chat_mode", "admin");
+            popStatus("success", "🎉 CS Siap!", "Admin telah menerima permintaan Anda. Silakan mulai kirim pesanan.");
+          }
           if (data.status === "resolved" && chatMode !== "bot") {
             chatMode = "bot";
             clearSupportChatSession();
@@ -1237,6 +1283,7 @@
             pendingSupportText = "";
             popStatus("success", "Chat Selesai", "CS telah menyelesaikan bantuan Anda. Kembali ke mode bot. Ketik 'hubungi cs' jika ada pertanyaan lagi.");
           }
+          isFirstCheck = false;
         });
       }
 
@@ -1258,14 +1305,56 @@
         });
       }
 
+      window.requestNotificationPermission = async () => {
+        if ((!"Notification") in window) {
+          console.log("Browser tidak support Notification API");
+          return false;
+        }
+        if (Notification.permission === "granted") {
+          return true;
+        }
+        if (Notification.permission !== "denied") {
+          const permission = await Notification.requestPermission();
+          return permission === "granted";
+        }
+        return false;
+      };
+
       window.popStatus = (type, title, msg) => {
-        const modal = document.getElementById("status-modal");
-        document.getElementById("status-title").innerText = title;
-        document.getElementById("status-msg").innerText = msg;
-        const icon = document.getElementById("status-icon");
-        icon.innerHTML = type === "error" ? "❌" : "✅";
-        icon.className = `w-16 h-16 lg:w-20 lg:h-20 ${type === "error" ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"} text-4xl flex items-center justify-center rounded-full mx-auto mb-6 border ${type === "error" ? "border-red-500/20" : "border-emerald-500/20"}`;
-        modal.classList.add("active-modal");
+        showAndroidNotif(type === "error" ? "error" : "success", title, msg);
+      };
+
+      window.showAndroidNotif = (type, title, msg) => {
+        let container = document.getElementById("android-notif-container");
+        if (!container) {
+          container = document.createElement("div");
+          container.id = "android-notif-container";
+          container.className = "fixed top-0 left-0 right-0 z-[9999] p-4 flex flex-col gap-2 pointer-events-none";
+          document.body.appendChild(container);
+        }
+
+        const notif = document.createElement("div");
+        const bgColor = type === "error" ? "bg-red-600" : type === "warning" ? "bg-yellow-600" : "bg-green-600";
+        const icon = type === "error" ? "⚠️" : type === "warning" ? "⏱️" : "✓";
+
+        notif.className = `${bgColor} text-white rounded-lg shadow-2xl p-4 max-w-md mx-auto w-full pointer-events-auto animate-pulse`;
+        notif.innerHTML = `
+          <div class="flex gap-3">
+            <div class="text-2xl flex-shrink-0">${icon}</div>
+            <div class="flex-1">
+              <div class="font-black text-sm uppercase tracking-wider">${title}</div>
+              <div class="text-xs opacity-90 mt-1">${msg}</div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(notif);
+        setTimeout(() => {
+          notif.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+          notif.style.opacity = "0";
+          notif.style.transform = "translateY(-20px)";
+          setTimeout(() => notif.remove(), 400);
+        }, 4000);
       };
 
       window.confirmPopup = () => document.getElementById("status-modal").classList.remove("active-modal");
@@ -1340,6 +1429,22 @@
         const ratingValue = data.rating ? Math.min(5, Math.max(1, Number(data.rating))) : 0;
         const ratingStars = ratingValue ? "★".repeat(ratingValue) + "☆".repeat(5 - ratingValue) : "Belum dinilai";
         const reviewText = data.review ? `<p class="history-review mt-3">${data.review}</p>` : "";
+
+        // Untuk failed orders, tampilkan reason; untuk success, tampilkan rating
+        const statusInfo = isSuccess
+          ? `<div class="bg-white/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/5 animate-card-entry" style="animation-delay: 0.4s">
+                <div class="text-[8px] lg:text-[9px] font-black text-slate-500 uppercase italic mb-2 tracking-widest">Rating</div>
+                <div class="flex items-center gap-2">
+                  <span class="history-stars">${ratingStars}</span>
+                  <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest">${ratingValue ? `${ratingValue}/5` : "Belum dinilai"}</span>
+                </div>
+                ${reviewText}
+            </div>`
+          : `<div class="bg-red-600/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-red-600/10 animate-card-entry" style="animation-delay: 0.4s">
+                <div class="text-[8px] lg:text-[9px] font-black text-red-500 uppercase italic mb-2 tracking-widest">Alasan Penolakan</div>
+                <div class="text-sm lg:text-base font-black text-red-300 italic tracking-tight">${data.reason || "Tidak ada keterangan"}</div>
+            </div>`;
+
         content.innerHTML = `
             <div class="grid grid-cols-2 gap-4 stagger-children active">
                 <div class="bg-white/5 p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-white/5"><div class="text-[8px] lg:text-[9px] font-black text-blue-500 uppercase italic mb-1 tracking-wider">Status</div><div class="text-[10px] lg:text-sm font-black ${isSuccess ? "text-emerald-500" : "text-red-500"} italic uppercase tracking-tight">${data.status}</div></div>
@@ -1356,14 +1461,7 @@
                 <div class="text-[8px] lg:text-[9px] font-black text-blue-500 uppercase italic mb-2 tracking-widest">Package</div>
                 <div class="text-lg lg:text-xl font-black text-white uppercase italic tracking-tighter">${data.produk} ${data.price ? `- Rp ${formatCurrency(data.price)}` : ""}</div>
             </div>
-            <div class="bg-white/5 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/5 animate-card-entry" style="animation-delay: 0.4s">
-                <div class="text-[8px] lg:text-[9px] font-black text-slate-500 uppercase italic mb-2 tracking-widest">Rating</div>
-                <div class="flex items-center gap-2">
-                  <span class="history-stars">${ratingStars}</span>
-                  <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest">${ratingValue ? `${ratingValue}/5` : "Belum dinilai"}</span>
-                </div>
-                ${reviewText}
-            </div>
+            ${statusInfo}
           `;
         modal.classList.add("active-modal");
       };
@@ -1556,17 +1654,55 @@
       }
 
       function loadRiwayat(uid) {
+        console.log("[DEBUG] Loading history for UID:", uid);
+
+        const list = document.getElementById("riwayat-list");
+        list.innerHTML = "";
+
+        if (!uid) {
+          // Empty state for no auth
+          const emptyCard = document.createElement("div");
+          emptyCard.className = "glass-card p-12 lg:p-20 rounded-[2.5rem] text-center border-2 border-dashed border-slate-600/50";
+          emptyCard.style.opacity = "0";
+          emptyCard.innerHTML = `
+            <div class="text-6xl lg:text-7xl mb-6 opacity-20">📦</div>
+            <h3 class="text-2xl lg:text-3xl font-black mb-4 text-slate-300 uppercase italic tracking-tighter">Belum Ada Riwayat</h3>
+            <p class="text-slate-500 mb-8 font-bold uppercase tracking-widest text-sm lg:text-base">Login atau buat pesanan pertama!</p>
+            <button onclick="handleLoginPrompt()" class="glow-button px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-wider">Mulai Belanja</button>
+          `;
+          list.appendChild(emptyCard);
+          return;
+        }
+
         onValue(ref(db, `riwayat/${uid}`), (snap) => {
-          const list = document.getElementById("riwayat-list");
-          list.innerHTML = "";
+          console.log("[DEBUG] Firebase snapshot exists:", snap.exists());
+          list.innerHTML = ""; // Clear for refresh
+
           if (!snap.exists()) {
-            list.innerHTML = `<p class="text-slate-500 font-black uppercase text-xs text-center p-10 opacity-30 animate-card-entry tracking-widest">Belum ada riwayat</p>`;
+            console.log("[DEBUG] No Firebase data, loading mock fallback");
+            loadMockHistory(list);
             return;
           }
+
           let raw = [];
           snap.forEach((c) => {
             raw.push({ key: c.key, ...c.val() });
           });
+          console.log("[DEBUG] Firebase data loaded:", raw.length, "items");
+
+          if (raw.length === 0) {
+            // True empty state (Firebase exists but empty)
+            const emptyCard = document.createElement("div");
+            emptyCard.className = "glass-card p-12 lg:p-20 rounded-[2.5rem] text-center border-2 border-dashed border-slate-600/50";
+            emptyCard.innerHTML = `
+              <div class="text-6xl lg:text-7xl mb-6 opacity-20">📦</div>
+              <h3 class="text-2xl lg:text-3xl font-black mb-4 text-slate-300 uppercase italic tracking-tighter">Riwayat Kosong</h3>
+              <p class="text-slate-500 mb-8 font-bold uppercase tracking-widest text-sm lg:text-base">Pesanan Anda akan muncul di sini!</p>
+            `;
+            list.appendChild(emptyCard);
+            return;
+          }
+
           raw.reverse().forEach((d) => {
             const isF = d.status === "failed";
             const ratingValue = d.rating ? Math.min(5, Math.max(1, Number(d.rating))) : 0;
@@ -1578,13 +1714,72 @@
             card.className = `glass-card history-card flex flex-col md:flex-row items-center justify-between p-5 lg:p-7 rounded-[1.5rem] lg:rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 text-left transition-all hover:border-blue-400 hover:bg-white/5`;
             card.onclick = () => openHistoryDetail(d);
             const priceLabel = d.price ? ` - Rp ${formatCurrency(d.price)}` : "";
-            card.innerHTML = `<div class="flex items-start gap-4 lg:gap-6 w-full"><div class="w-11 h-11 lg:w-12 lg:h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-black flex-shrink-0 border border-current/10">${isF ? "!" : "✓"}</div><div class="flex-1"><h4 class="text-sm lg:text-base font-black text-white uppercase italic tracking-tight">${d.produk}${priceLabel}</h4><div class="text-[8px] lg:text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-wider">${d.roblox} • ${d.time}</div><div class="mt-3 flex flex-wrap items-center gap-2"><span class="history-rating-label">Rating</span><span class="${ratingClass}">${ratingStars}</span></div>${d.review ? `<p class="history-review mt-3">${d.review}</p>` : ""}</div><div class="flex flex-col items-end gap-3"><div class="text-[9px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase tracking-widest border border-current/20 px-3 py-1 rounded-full bg-current/5">Status: ${isF ? "Rejected" : "Success"}</div><button type="button" onclick="event.stopPropagation(); openRatingModal('${d.key}')" class="rate-order-btn">${buttonLabel}</button></div></div>`;
+            const infoSection = isF
+              ? `<div class="mt-3 flex flex-wrap items-start gap-2"><span class="text-red-400 font-bold text-[8px] uppercase tracking-wider">Alasan:</span><span class="text-red-300 text-[8px]">${d.reason || "Tidak ada keterangan"}</span></div>`
+              : `<div class="mt-3 flex flex-wrap items-center gap-2"><span class="history-rating-label">Rating</span><span class="${ratingClass}">${ratingStars}</span></div>`;
+            const ratingButton = !isF ? `<button type="button" onclick="event.stopPropagation(); openRatingModal('${d.key}')" class="rate-order-btn">${buttonLabel}</button>` : "";
+            card.innerHTML = `<div class="flex items-start gap-4 lg:gap-6 w-full"><div class="w-11 h-11 lg:w-12 lg:h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-black flex-shrink-0 border border-current/10">${isF ? "!" : "✓"}</div><div class="flex-1"><h4 class="text-sm lg:text-base font-black text-white uppercase italic tracking-tight">${d.produk}${priceLabel}</h4><div class="text-[8px] lg:text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-wider">${d.roblox} • ${d.time}</div>${infoSection}${d.review ? `<p class="history-review mt-3">${d.review}</p>` : ""}</div><div class="flex flex-col items-end gap-3"><div class="text-[9px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase tracking-widest border border-current/20 px-3 py-1 rounded-full bg-current/5">Status: ${isF ? "Rejected" : "Success"}</div>${ratingButton}</div></div>`;
             list.appendChild(card);
           });
+
           if (!document.getElementById("page-riwayat").classList.contains("hidden")) {
             applyStagger("riwayat-list", ".glass-card", 0.1, 0.08);
           }
         });
+      }
+
+      // Helper for login prompt from empty state
+      window.handleLoginPrompt = () => {
+        document.getElementById("auth-modal").classList.add("active-modal");
+        showPage("home");
+      };
+
+      // Mock fallback data from data.json (reformatted as Robux orders)
+      // Static mock data from data.json (embedded for reliability)
+      const mockData = [
+        { id: 1, nama: "Apel", rasa: "Manis", warna: "Merah" },
+        { id: 2, nama: "Jeruk", rasa: "Asam", warna: "Oranye" },
+        { id: 3, nama: "Mangga", rasa: "Manis", warna: "Hijau" },
+      ];
+
+      function loadMockHistory(container) {
+        console.log("[DEBUG] Loading static mock history");
+        // Transform fruit data → Robux history format
+        const historyData = mockData.map((item, index) => ({
+          key: `mock-${index + 1}`,
+          produk: `${item.nama}Robux 1000`,
+          roblox: `User${index + 1}`,
+          time: new Date(Date.now() - (index + 1) * 86400000).toLocaleString("id-ID"),
+          status: index % 3 === 0 ? "failed" : "success",
+          price: 50000 + index * 10000,
+          rating: index === 0 ? 5 : index === 1 ? 4 : null,
+          review: index === 2 ? "Pelayanan mantap!" : null,
+          reason: index % 3 === 0 ? "Stok habis" : null,
+        }));
+
+        historyData.reverse().forEach((d) => {
+          const isF = d.status === "failed";
+          const ratingValue = d.rating ? Math.min(5, Math.max(1, Number(d.rating))) : 0;
+          const ratingStars = ratingValue ? "★".repeat(ratingValue) + "☆".repeat(5 - ratingValue) : "Belum dinilai";
+          const ratingClass = ratingValue ? "history-stars" : "text-slate-400 uppercase tracking-widest text-[8px]";
+          const buttonLabel = ratingValue ? "Update Rating" : "Beri Rating";
+          const card = document.createElement("div");
+          card.style.opacity = "0";
+          card.className = `glass-card history-card flex flex-col md:flex-row items-center justify-between p-5 lg:p-7 rounded-[1.5rem] lg:rounded-[2rem] border-l-4 ${isF ? "border-red-600" : "border-blue-500"} mb-4 text-left transition-all hover:border-blue-400 hover:bg-white/5`;
+          card.onclick = () => openHistoryDetail(d);
+          const priceLabel = d.price ? ` - Rp ${formatCurrency(d.price)}` : "";
+          const infoSection = isF
+            ? `<div class="mt-3 flex flex-wrap items-start gap-2"><span class="text-red-400 font-bold text-[8px] uppercase tracking-wider">Alasan:</span><span class="text-red-300 text-[8px]">${d.reason || "Tidak ada keterangan"}</span></div>`
+            : `<div class="mt-3 flex flex-wrap items-center gap-2"><span class="history-rating-label">Rating</span><span class="${ratingClass}">${ratingStars}</span></div>`;
+          const ratingButton = !isF ? `<button type="button" onclick="event.stopPropagation(); openRatingModal('${d.key}')" class="rate-order-btn">${buttonLabel}</button>` : "";
+          card.innerHTML = `<div class="flex items-start gap-4 lg:gap-6 w-full"><div class="w-11 h-11 lg:w-12 lg:h-12 rounded-2xl ${isF ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"} flex items-center justify-center font-black flex-shrink-0 border border-current/10">${isF ? "!" : "✓"}</div><div class="flex-1"><h4 class="text-sm lg:text-base font-black text-white uppercase italic tracking-tight">${d.produk}${priceLabel}</h4><div class="text-[8px] lg:text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-wider">${d.roblox} • ${d.time}</div>${infoSection}${d.review ? `<p class="history-review mt-3">${d.review}</p>` : ""}</div><div class="flex flex-col items-end gap-3"><div class="text-[9px] font-black ${isF ? "text-red-500" : "text-blue-400"} uppercase tracking-widest border border-current/20 px-3 py-1 rounded-full bg-current/5">Status: ${isF ? "Rejected" : "Success"}</div>${ratingButton}</div></div>`;
+          container.appendChild(card);
+        });
+
+        if (!document.getElementById("page-riwayat").classList.contains("hidden")) {
+          applyStagger("riwayat-list", ".glass-card", 0.1, 0.08);
+        }
+        console.log("[DEBUG] Static mock history rendered:", historyData.length, "items");
       }
 
       // Chat Logic Revisi Total (Solid Style)
