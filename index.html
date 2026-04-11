@@ -801,23 +801,87 @@
       </div>
     </div>
 
-    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-4 text-center overflow-y-auto">
-      <div class="glass-card modal-content-animate w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] my-auto">
-        <h2 class="text-3xl lg:text-4xl font-black mb-2 text-white italic">RBX<span class="text-blue-500">STORE</span></h2>
-        <div id="login-form" class="space-y-4 mt-6 stagger-children active">
-          <input type="email" id="email-login" placeholder="Email Address" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
-          <input type="password" id="pass-login" placeholder="Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
-          <button onclick="handleLogin()" class="glow-button w-full py-4 rounded-2xl font-extrabold text-sm uppercase">Login Dashboard</button>
-          <p class="text-xs text-slate-500 mt-4 fade-in-quick">No account? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Register</a></p>
-        </div>
-        <div id="register-form" class="hidden space-y-4 mt-6 stagger-children">
-          <input type="email" id="email-reg" placeholder="New Email" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
-          <input type="password" id="pass-reg" placeholder="Create Password" class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold" />
-          <button onclick="handleRegister()" class="w-full glow-button py-4 rounded-2xl font-extrabold text-sm text-white uppercase">Sign Up</button>
-          <p class="text-xs text-slate-500 mt-4">Registered? <a href="#" onclick="toggleAuth()" class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Back to Login</a></p>
-        </div>
-      </div>
+    <div id="auth-modal" class="modal-bg fixed inset-0 z-[100] items-center justify-center p-4 overflow-y-auto">
+
+  <!-- CLOSE -->
+  <button onclick="closeAuthModal()"
+    class="absolute top-4 right-4 w-10 h-10 bg-white/5 hover:bg-red-600/20 text-white rounded-full flex items-center justify-center transition-colors z-50">
+    ✕
+  </button>
+
+  <!-- CARD -->
+  <div class="glass-card modal-content-animate w-full max-w-md p-8 lg:p-12 rounded-[2.5rem] my-auto flex flex-col">
+
+    <h2 class="text-3xl lg:text-4xl font-black mb-2 text-white italic text-center">
+      RBX<span class="text-blue-500">STORE</span>
+    </h2>
+
+    <!-- ================= LOGIN ================= -->
+    <div id="login-form" class="space-y-4 mt-6 flex flex-col">
+
+      <input type="email" id="email-login"
+        placeholder="Email Address"
+        class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold"
+        onkeypress="if(event.key==='Enter')handleLogin()" />
+
+      <input type="password" id="pass-login"
+        placeholder="Password"
+        class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold"
+        onkeypress="if(event.key==='Enter')handleLogin()" />
+
+      <button onclick="handleLogin()"
+        class="glow-button w-full py-4 rounded-2xl font-extrabold text-sm uppercase">
+        Login Dashboard
+      </button>
+
+      <!-- LUPA PASSWORD -->
+      <p onclick="forgotPassword()"
+        class="text-xs text-blue-400 cursor-pointer hover:underline text-left">
+        Lupa Password?
+      </p>
+
+      <!-- REGISTER LINK -->
+      <p class="text-xs text-slate-500">
+        No account?
+        <a href="#" onclick="toggleAuth()"
+          class="text-blue-400 font-bold block mt-1 hover:text-blue-300">
+          Register
+        </a>
+      </p>
+
     </div>
+
+    <!-- ================= REGISTER ================= -->
+    <div id="register-form" class="hidden space-y-4 mt-6 flex flex-col">
+
+      <input type="email" id="email-reg"
+        placeholder="New Email"
+        class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold"
+        onkeypress="if(event.key==='Enter')handleRegister()" />
+
+      <input type="password" id="pass-reg"
+        placeholder="Create Password"
+        class="input-premium w-full p-4 rounded-2xl outline-none text-sm font-semibold"
+        onkeypress="if(event.key==='Enter')handleRegister()" />
+
+      <button onclick="handleRegister()"
+        class="glow-button w-full py-4 rounded-2xl font-extrabold text-sm uppercase">
+        Sign Up
+      </button>
+
+      <!-- BACK LOGIN -->
+      <p class="text-xs text-slate-500">
+        Registered?
+        <a href="#" onclick="toggleAuth()"
+          class="text-blue-400 font-bold block mt-1 hover:text-blue-300">
+          Back to Login
+        </a>
+      </p>
+
+    </div>
+
+  </div>
+</div>
 
     <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 lg:w-16 lg:h-16 glow-button rounded-full flex items-center justify-center z-[1000] shadow-2xl transition-all active:scale-90">
       <svg class="w-7 h-7 lg:w-8 lg:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -993,7 +1057,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
       import { getDatabase, ref, set, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
+      import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
       const firebaseConfig = {
         apiKey: "AIzaSyBgDG1pbpT-eB8RR_gPGs1EfZR9Sfczzfc",
         authDomain: "cute-temanmu.firebaseapp.com",
@@ -1030,6 +1094,108 @@
           console.warn("Discord webhook failed", err);
         }
       }
+
+      // ================= TOGGLE =================
+window.toggleAuth = () => {
+  const login = document.getElementById("login-form");
+  const register = document.getElementById("register-form");
+
+  login.classList.toggle("hidden");
+  register.classList.toggle("hidden");
+
+  // reset input
+  document.getElementById("email-login").value = "";
+  document.getElementById("pass-login").value = "";
+  document.getElementById("email-reg").value = "";
+  document.getElementById("pass-reg").value = "";
+};
+
+// ================= CLOSE MODAL =================
+window.closeAuthModal = () => {
+  document.getElementById("auth-modal").classList.remove("active-modal");
+};
+
+// ================= LOGIN =================
+window.handleLogin = async () => {
+  const email = document.getElementById("email-login").value.trim();
+  const password = document.getElementById("pass-login").value;
+
+  if (!email || !password) {
+    return popStatus("error", "INCOMPLETE", "Isi email dan password.");
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+
+    popStatus("success", "LOGIN BERHASIL", "Selamat datang!");
+    closeAuthModal();
+
+  } catch (e) {
+    let msg = "Terjadi kesalahan.";
+
+    if (e.code === "auth/invalid-email") msg = "Email tidak valid.";
+    else if (e.code === "auth/user-not-found") msg = "Akun tidak ditemukan.";
+    else if (e.code === "auth/wrong-password") msg = "Password salah.";
+    else if (e.code === "auth/invalid-credential") msg = "Email atau password salah.";
+
+    popStatus("error", "LOGIN GAGAL", msg);
+  }
+};
+
+// ================= REGISTER =================
+window.handleRegister = async () => {
+  const email = document.getElementById("email-reg").value.trim();
+  const password = document.getElementById("pass-reg").value;
+
+  if (!email || !password) {
+    return popStatus("error", "INCOMPLETE", "Isi email dan password.");
+  }
+
+  if (password.length < 6) {
+    return popStatus("error", "WEAK PASSWORD", "Password minimal 6 karakter.");
+  }
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+
+    popStatus("success", "ACCOUNT CREATED", "Akun berhasil dibuat!");
+
+    // balik ke login
+    toggleAuth();
+
+  } catch (e) {
+    let msg = "Terjadi kesalahan.";
+
+    if (e.code === "auth/invalid-email") msg = "Email tidak valid.";
+    else if (e.code === "auth/email-already-in-use") msg = "Email sudah terdaftar.";
+    else if (e.code === "auth/weak-password") msg = "Password terlalu lemah.";
+
+    popStatus("error", "REGISTER GAGAL", msg);
+  }
+};
+
+// ================= FORGOT PASSWORD =================
+window.forgotPassword = async () => {
+  const email = document.getElementById("email-login").value.trim();
+
+  if (!email) {
+    return popStatus("error", "EMAIL KOSONG", "Masukkan email dulu.");
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+
+    popStatus("success", "TERKIRIM", "Cek email untuk reset password!");
+
+  } catch (e) {
+    let msg = "Gagal mengirim reset.";
+
+    if (e.code === "auth/user-not-found") msg = "Email tidak terdaftar.";
+    else if (e.code === "auth/invalid-email") msg = "Format email salah.";
+
+    popStatus("error", "ERROR", msg);
+  }
+};
 
       function formatStarRating(value) {
         return value > 0 ? "★".repeat(value) + "☆".repeat(5 - value) : "Belum dinilai";
@@ -1736,26 +1902,11 @@
 
       // Mock fallback data from data.json (reformatted as Robux orders)
       // Static mock data from data.json (embedded for reliability)
-      const mockData = [
-        { id: 1, nama: "Apel", rasa: "Manis", warna: "Merah" },
-        { id: 2, nama: "Jeruk", rasa: "Asam", warna: "Oranye" },
-        { id: 3, nama: "Mangga", rasa: "Manis", warna: "Hijau" },
-      ];
+      
 
       function loadMockHistory(container) {
         console.log("[DEBUG] Loading static mock history");
         // Transform fruit data → Robux history format
-        const historyData = mockData.map((item, index) => ({
-          key: `mock-${index + 1}`,
-          produk: `${item.nama}Robux 1000`,
-          roblox: `User${index + 1}`,
-          time: new Date(Date.now() - (index + 1) * 86400000).toLocaleString("id-ID"),
-          status: index % 3 === 0 ? "failed" : "success",
-          price: 50000 + index * 10000,
-          rating: index === 0 ? 5 : index === 1 ? 4 : null,
-          review: index === 2 ? "Pelayanan mantap!" : null,
-          reason: index % 3 === 0 ? "Stok habis" : null,
-        }));
 
         historyData.reverse().forEach((d) => {
           const isF = d.status === "failed";
@@ -1933,10 +2084,7 @@
       document.querySelectorAll(".sidebar-item").forEach((i) => i.classList.remove("active"));
       document.getElementById(`nav-${p}`).classList.add("active");
 
-      window.toggleAuth = () => {
-        document.getElementById("login-form").classList.toggle("hidden");
-        document.getElementById("register-form").classList.toggle("hidden");
-      };
+      
     </script>
   </body>
 </html>
