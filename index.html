@@ -728,6 +728,37 @@
       border-radius: 999px;
     }
 
+    #history-scroll {
+      scroll-behavior: smooth;
+    }
+
+    /* Scrollbar utama */
+    #history-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #history-scroll::-webkit-scrollbar-track {
+      background: rgba(2, 6, 23, 0.7);
+      border-radius: 20px;
+    }
+
+    #history-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #3b82f6, #2563eb);
+      border-radius: 20px;
+      border: 2px solid rgba(2, 6, 23, 0.7);
+    }
+
+    /* Hover */
+    #history-scroll::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #60a5fa, #1d4ed8);
+    }
+
+    /* Firefox */
+    #history-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 rgba(2, 6, 23, 0.7);
+    }
+
     @media (max-width: 1024px) {
       #chat-window {
         width: calc(100% - 1.5rem) !important;
@@ -899,12 +930,12 @@
   <div id="history-detail-modal"
     class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 bg-[#020617]/90 backdrop-blur-xl">
 
-    <div
+    <div id="history-box"
       class="glass-card w-full max-w-lg max-h-[85vh] rounded-[3rem] border-t-4 border-blue-600 relative flex flex-col modal-enter">
 
       <!-- CLOSE -->
-      <button onclick="closeHistoryDetail()"
-        class="absolute top-6 right-6 p-2 bg-white/5 hover:bg-blue-600/20 rounded-full text-white z-10">
+      <button onclick="event.stopPropagation(); closeHistoryDetail()"
+        class="absolute top-6 right-6 z-[9999] p-3 bg-white/10 hover:bg-blue-600/30 rounded-full text-white transition active:scale-90">
         ✕
       </button>
 
@@ -918,15 +949,22 @@
         </p>
       </div>
 
-      <!-- 🔥 SCROLL AREA -->
+      <!-- SCROLL -->
       <div id="history-scroll" class="px-10 pb-6 overflow-y-auto flex-1">
         <div id="history-detail-content" class="space-y-6"></div>
       </div>
 
       <!-- FOOTER -->
       <div class="p-6 pt-0">
-        <button onclick="closeHistoryDetail()" class="btn-core w-full py-5 rounded-2xl font-black text-xs uppercase">
-          Close
+        <button onclick="closeHistoryDetail()" class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-widest text-white 
+    bg-gradient-to-r from-blue-600 to-blue-500 
+    hover:from-blue-500 hover:to-blue-400 
+    active:scale-[0.97] 
+    shadow-lg shadow-blue-600/20 
+    transition-all duration-200">
+
+          CLOSE
+
         </button>
       </div>
 
@@ -1924,7 +1962,14 @@
       document.body.style.overflow = "hidden";
     };
 
-    window.closeHistoryDetail = () => document.getElementById("history-detail-modal").classList.remove("active-modal");
+    window.closeHistoryDetail = () => {
+      const modal = document.getElementById("history-detail-modal");
+
+      modal.classList.remove("active-modal"); // 🔥 WAJIB
+      modal.classList.add("hidden"); // sembunyikan
+
+      document.body.style.overflow = "auto";
+    };
 
     // Auth & DB Monitoring
     onAuthStateChanged(auth, (user) => {
