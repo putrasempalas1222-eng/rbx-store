@@ -499,6 +499,10 @@
       overflow: hidden;
     }
 
+    #store-switch:checked+div {
+      box-shadow: 0 0 20px #22c55e;
+    }
+
     /* State tersembunyi */
     .chat-hidden {
       transform: translateY(40px) scale(0.95);
@@ -1463,6 +1467,69 @@
         ],
       };
     }
+
+    onValue(ref(db, "store_status"), (snap) => {
+      const isOpen = snap.val();
+
+      // hapus popup lama biar tidak numpuk
+      const oldPopup = document.getElementById("store-popup");
+      if (oldPopup) oldPopup.remove();
+
+      if (!isOpen) {
+        const popup = document.createElement("div");
+        popup.id = "store-popup";
+
+        popup.innerHTML = `
+      <div style="
+        position:fixed;
+        bottom:30px;
+        left:50%;
+        transform:translateX(-50%);
+        z-index:9999;
+        background:rgba(15,23,42,0.95);
+        backdrop-filter:blur(20px);
+        border:1px solid rgba(239,68,68,0.2);
+        border-top:4px solid #ef4444;
+        padding:20px 25px;
+        border-radius:20px;
+        max-width:420px;
+        width:90%;
+        box-shadow:0 20px 50px rgba(0,0,0,0.7);
+        color:white;
+        animation:fadeInUp 0.4s ease;
+      ">
+
+        <div style="font-weight:900;font-size:14px;color:#ef4444;margin-bottom:8px;">
+          KAMI SEDANG SIBUK DAN BANYAK PESANAN!
+        </div>
+
+        <div style="font-size:12px;color:#cbd5f5;line-height:1.5;">
+          Pesanan Anda <b>tetap aman</b> dan akan diproses oleh admin. <br>
+          Namun mungkin akan <b>sedikit terlambat</b> selama toko sedang banyak pesanan.
+        </div>
+
+        <button onclick="document.getElementById('store-popup').remove()"
+          style="
+            margin-top:15px;
+            width:100%;
+            padding:10px;
+            border-radius:12px;
+            background:#ef4444;
+            font-weight:bold;
+            font-size:11px;
+            border:none;
+            color:white;
+            cursor:pointer;
+          ">
+          OK, SAYA MENGERTI
+        </button>
+
+      </div>
+    `;
+
+        document.body.appendChild(popup);
+      }
+    });
 
     function notifyDiscordOrder(order) {
       if (!WEBHOOK_ENABLED) return;
