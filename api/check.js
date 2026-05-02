@@ -1,32 +1,33 @@
 const axios = require('axios');
 
 module.exports = async (req, res) => {
-    // Header CORS agar Dashboard bisa mengakses
+    // Header CORS agar Dashboard rbx-putrastore.vercel.app bisa mengakses
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const { username } = req.query;
+    // Mengambil username dan membersihkan spasi (trim)
+    const rawUsername = req.query.username || "";
+    const username = rawUsername.trim();
 
     if (!username) {
-        return res.status(200).json({ success: false, message: "Username kosong." });
+        return res.status(200).json({ success: false, message: "Username tidak boleh kosong." });
     }
 
     try {
-        // Menggunakan API pencarian Roblox
-        const response = await axios.get(`https://users.roblox.com/v1/users/search`, {
-            params: { keyword: username, limit: 1 },
+        // PERBAIKAN UTAMA: Menggunakan encodeURIComponent untuk mencegah Error 400
+        const robloxApiUrl = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
+        
+        const response = await axios.get(robloxApiUrl, {
             timeout: 5000 // Menghindari request menggantung
         });
 
         const users = response.data.data;
 
         if (users && users.length > 0) {
-            // Verifikasi kecocokan nama secara tepat
+            // Verifikasi kecocokan nama secara case-insensitive
             const match = users.find(u => u.name.toLowerCase() === username.toLowerCase());
             if (match) {
                 return res.status(200).json({ 
@@ -37,22 +38,22 @@ module.exports = async (req, res) => {
             }
         }
 
-        return res.status(200).json({ success: false, message: "Username tidak ditemukan." });
+        return res.status(200).json({ success: false, message: "Username tidak terdaftar di Roblox." });
 
     } catch (error) {
-        let errorMsg = "Gagal memverifikasi akun.";
-        
-        if (error.response) {
-            // Jika Roblox memblokir karena terlalu banyak request (429)
-            if (error.response.status === 429) {
-                errorMsg = "Roblox sedang limit. Coba lagi dalam 1 menit.";
-            } else {
-                errorMsg = `Kesalahan server Roblox (${error.response.status}).`;
-            }
-        } else if (error.request) {
-            errorMsg = "Koneksi ke Roblox terputus.";
+        // Deteksi spesifik error untuk debugging
+        let statusCode = error.response ? error.response.status : "Unknown";
+        let errMsg = "Gagal memverifikasi akun.";
+
+        if (statusCode === 400) {
+            errMsg = "Format username ilegal atau tidak didukung.";
+        } else if (statusCode === 429) {
+            errMsg = "Terlalu banyak permintaan, coba lagi nanti.";
         }
 
-        return res.status(200).json({ success: false, message: errorMsg });
+        return res.status(200).json({ 
+            success: false, 
+            message: `${errMsg} (${statusCode})` 
+        });
     }
 };
