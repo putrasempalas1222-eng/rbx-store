@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 module.exports = async (req, res) => {
-    // Header agar Dashboard kamu bisa memanggil API ini
+    // Pengaturan CORS agar Dashboard bisa mengakses API ini
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -13,19 +13,20 @@ module.exports = async (req, res) => {
     const { username } = req.query;
 
     if (!username) {
-        return res.status(400).json({ success: false, message: "Username kosong" });
+        return res.status(400).json({ success: false, message: "Username tidak boleh kosong." });
     }
 
     try {
-        // Mencari user di Roblox
+        // Melakukan pencarian user ke API resmi Roblox
         const response = await axios.get(`https://users.roblox.com/v1/users/search`, {
-            params: { keyword: username, limit: 1 }
+            params: { keyword: username, limit: 1 },
+            timeout: 5000 // Batas waktu 5 detik agar tidak menggantung
         });
 
         const users = response.data.data;
 
         if (users && users.length > 0) {
-            // Pastikan nama benar-benar sama (case-insensitive)
+            // Validasi apakah nama benar-benar cocok (mencegah salah sasaran)
             const match = users.find(u => u.name.toLowerCase() === username.toLowerCase());
             if (match) {
                 return res.status(200).json({ 
@@ -36,9 +37,14 @@ module.exports = async (req, res) => {
             }
         }
 
-        return res.status(200).json({ success: false, message: "Username tidak ditemukan." });
+        return res.status(200).json({ success: false, message: "Username tidak terdaftar di Roblox." });
 
     } catch (error) {
-        return res.status(200).json({ success: false, message: "Sistem Roblox sedang limit/sibuk." });
+        // Jika terkena Rate Limit (Error 429) atau server Roblox bermasalah
+        console.error("Roblox API Error:", error.message);
+        return res.status(200).json({ 
+            success: false, 
+            message: "Sistem verifikasi sedang limit. Tunggu beberapa saat lagi." 
+        });
     }
 };
