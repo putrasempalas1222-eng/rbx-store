@@ -1,51 +1,44 @@
 const axios = require('axios');
 
 module.exports = async (req, res) => {
-    // 1. Mengatur header agar bisa diakses oleh frontend Anda (CORS Policy)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    // Header agar Dashboard kamu bisa memanggil API ini
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Menangani preflight request browser
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+        return res.status(200).end();
     }
 
     const { username } = req.query;
 
     if (!username) {
-        return res.status(400).json({ success: false, message: "Username harus diisi" });
+        return res.status(400).json({ success: false, message: "Username kosong" });
     }
 
     try {
-        // 2. Menembak API Roblox Search
-        const robloxRes = await axios.get(`https://users.roblox.com/v1/users/search`, {
-            params: {
-                keyword: username,
-                limit: 1
-            }
+        // Mencari user di Roblox
+        const response = await axios.get(`https://users.roblox.com/v1/users/search`, {
+            params: { keyword: username, limit: 1 }
         });
 
-        const users = robloxRes.data.data;
+        const users = response.data.data;
 
-        // 3. Logika pengecekan: Apakah user ditemukan dan namanya pas?
         if (users && users.length > 0) {
+            // Pastikan nama benar-benar sama (case-insensitive)
             const match = users.find(u => u.name.toLowerCase() === username.toLowerCase());
             if (match) {
                 return res.status(200).json({ 
                     success: true, 
-                    userId: match.id, 
+                    userId: match.id,
                     displayName: match.displayName 
                 });
             }
         }
 
-        res.status(200).json({ success: false, message: "Username Roblox tidak ditemukan." });
+        return res.status(200).json({ success: false, message: "Username tidak ditemukan." });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Server Roblox sedang sibuk." });
+        return res.status(200).json({ success: false, message: "Sistem Roblox sedang limit/sibuk." });
     }
 };
