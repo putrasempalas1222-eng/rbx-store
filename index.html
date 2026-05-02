@@ -1213,9 +1213,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 stagger-children active">
 
               <input type="text" id="roblox_user" placeholder="Username Roblox"
-                class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none font-black italic uppercase text-xs lg:text-sm" />
+                class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none font-black italic text-xs lg:text-sm" />
 
-              <input type="text" id="discord_user" placeholder="Username Discord"
+              <input type="text" id="discord_user" placeholder="Nomor Whatsapp"
                 class="input-premium w-full p-4 lg:p-5 rounded-2xl outline-none font-black italic text-xs lg:text-sm" />
 
               <!-- PAYMENT METHOD -->
@@ -1347,26 +1347,11 @@
 
     async function validateRobloxUsername(username) {
     try {
-        // Menggunakan CORS Proxy agar tidak diblokir browser
-        // Penting: Aktifkan akses di https://cors-anywhere.herokuapp.com/corsdemo jika pakai localhost
-        const proxy = "https://cors-anywhere.herokuapp.com/";
-        const target = `https://users.roblox.com/v1/users/search?keyword=${username}&limit=1`;
-        
-        const response = await fetch(proxy + target);
-        const data = await response.json();
-        
-        if (data.data && data.data.length > 0) {
-            // Cari yang namanya benar-benar sama (case-insensitive)
-            const match = data.data.find(u => u.name.toLowerCase() === username.toLowerCase());
-            if (match) {
-                return { success: true, userId: match.id };
-            }
-        }
-        return { success: false, message: "Username Roblox tidak ditemukan." };
+        // Mengarah ke folder /api/check.js yang di-deploy di Vercel
+        const response = await fetch(`/api/check?username=${username}`);
+        return await response.json();
     } catch (e) {
-        console.error(e);
-        // Jika sistem proxy/API down, tetap beri akses atau pesan error yang sopan
-        return { success: false, message: "Sistem verifikasi sedang sibuk." };
+        return { success: false, message: "Gagal terhubung ke server." };
     }
 }
 
@@ -2208,29 +2193,20 @@
     const paymentNumber = document.getElementById("payment_number").value;
     const paymentName = document.getElementById("payment_name").value;
 
-    // 1. Cek Kelengkapan Input
     if (!r || !d || !selectedPackage || !paymentMethod || !paymentNumber || !paymentName) {
-        return popStatus("error", "INCOMPLETE", "Pastikan semua data sudah diisi.");
+        return popStatus("error", "INCOMPLETE", "Isi semua data terlebih dahulu.");
     }
 
-    // 2. Tampilkan Feedback Loading
+    // Tampilkan loading di notifikasi
     popStatus("warning", "CHECKING", "Sedang memverifikasi akun Roblox...");
 
-    try {
-        // 3. Eksekusi Validasi Username (Memanggil fungsi di bawah)
-        const check = await validateRobloxUsername(r);
+    const check = await validateRobloxUsername(r);
 
-        if (!check.success) {
-            // STOP jika tidak ditemukan
-            return popStatus("error", "INVALID ACCOUNT", check.message);
-        }
-
-        // 4. Jika Valid, buka Modal QRIS
-        popStatus("success", "ACCOUNT READY", `Akun ditemukan. Silakan lanjut pembayaran.`);
+    if (check.success) {
+        popStatus("success", "VALID", `Akun ditemukan: ${check.displayName}`);
         document.getElementById("qris-modal").classList.add("active-modal");
-        
-    } catch (err) {
-        popStatus("error", "SYSTEM ERROR", "Gagal memverifikasi akun, coba lagi nanti.");
+    } else {
+        popStatus("error", "INVALID", check.message);
     }
 };
 
