@@ -1345,13 +1345,19 @@
       document.getElementById("pass-reg").value = "";
     };
 
-    async function validateRobloxUsername(username) {
+   async function validateRobloxUsername(username) {
     try {
-        // Mengarah ke folder /api/check.js yang di-deploy di Vercel
-        const response = await fetch(`/api/check?username=${username}`);
+        // Menggunakan URL Vercel Anda untuk menghindari CORS dan Limit Proxy
+        const response = await fetch(`https://rbx-putrastore.vercel.app/api/check?username=${encodeURIComponent(username)}`);
+        
+        if (!response.ok) {
+            throw new Error("Gagal terhubung ke server verifikasi.");
+        }
+        
         return await response.json();
     } catch (e) {
-        return { success: false, message: "Gagal terhubung ke server." };
+        console.error("Validation Error:", e);
+        return { success: false, message: "Sistem verifikasi tidak merespon." };
     }
 }
 
