@@ -1345,6 +1345,31 @@
       document.getElementById("pass-reg").value = "";
     };
 
+    async function validateRobloxUsername(username) {
+    try {
+        // Menggunakan CORS Proxy agar tidak diblokir browser
+        // Penting: Aktifkan akses di https://cors-anywhere.herokuapp.com/corsdemo jika pakai localhost
+        const proxy = "https://cors-anywhere.herokuapp.com/";
+        const target = `https://users.roblox.com/v1/users/search?keyword=${username}&limit=1`;
+        
+        const response = await fetch(proxy + target);
+        const data = await response.json();
+        
+        if (data.data && data.data.length > 0) {
+            // Cari yang namanya benar-benar sama (case-insensitive)
+            const match = data.data.find(u => u.name.toLowerCase() === username.toLowerCase());
+            if (match) {
+                return { success: true, userId: match.id };
+            }
+        }
+        return { success: false, message: "Username Roblox tidak ditemukan." };
+    } catch (e) {
+        console.error(e);
+        // Jika sistem proxy/API down, tetap beri akses atau pesan error yang sopan
+        return { success: false, message: "Sistem verifikasi sedang sibuk." };
+    }
+}
+
     // ================= CLOSE MODAL =================
     window.closeAuthModal = () => {
       document.getElementById("auth-modal").classList.remove("active-modal");
@@ -2174,16 +2199,40 @@
       );
     }
 
-    window.checkStockAndOpenQris = () => {
-      if (!auth.currentUser) return popStatus("error", "LOGIN REQUIRED", "Silakan login dulu.");
-      const r = document.getElementById("roblox_user").value;
-      const d = document.getElementById("discord_user").value;
-      const paymentMethod = document.getElementById("payment_method").value;
-      const paymentNumber = document.getElementById("payment_number").value;
-      const paymentName = document.getElementById("payment_name").value;
-      if (!r || !d || !selectedPackage || !paymentMethod || !paymentNumber || !paymentName) return popStatus("error", "INCOMPLETE", "Pastikann data lengkap di isi semua.");
-      document.getElementById("qris-modal").classList.add("active-modal");
-    };
+   window.checkStockAndOpenQris = async () => {
+    if (!auth.currentUser) return popStatus("error", "LOGIN REQUIRED", "Silakan login dulu.");
+    
+    const r = document.getElementById("roblox_user").value.trim();
+    const d = document.getElementById("discord_user").value.trim();
+    const paymentMethod = document.getElementById("payment_method").value;
+    const paymentNumber = document.getElementById("payment_number").value;
+    const paymentName = document.getElementById("payment_name").value;
+
+    // 1. Cek Kelengkapan Input
+    if (!r || !d || !selectedPackage || !paymentMethod || !paymentNumber || !paymentName) {
+        return popStatus("error", "INCOMPLETE", "Pastikan semua data sudah diisi.");
+    }
+
+    // 2. Tampilkan Feedback Loading
+    popStatus("warning", "CHECKING", "Sedang memverifikasi akun Roblox...");
+
+    try {
+        // 3. Eksekusi Validasi Username (Memanggil fungsi di bawah)
+        const check = await validateRobloxUsername(r);
+
+        if (!check.success) {
+            // STOP jika tidak ditemukan
+            return popStatus("error", "INVALID ACCOUNT", check.message);
+        }
+
+        // 4. Jika Valid, buka Modal QRIS
+        popStatus("success", "ACCOUNT READY", `Akun ditemukan. Silakan lanjut pembayaran.`);
+        document.getElementById("qris-modal").classList.add("active-modal");
+        
+    } catch (err) {
+        popStatus("error", "SYSTEM ERROR", "Gagal memverifikasi akun, coba lagi nanti.");
+    }
+};
 
     window.confirmQris = async () => {
       const r = document.getElementById("roblox_user").value.trim();
